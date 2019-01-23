@@ -1,11 +1,11 @@
 {% extends 'admin/admin.html' %}
-{% block contend %}
+{% block content %}
 <!--内容-->
 <section class="content-header">
     <h1>微电影管理系统</h1>
     <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> 收藏管理</a></li>
-        <li class="active">收藏列表</li>
+        <li><a href="#"><i class="fa fa-dashboard"></i> 预告管理</a></li>
+        <li class="active">预告列表</li>
     </ol>
 </section>
 <section class="content" id="showcontent">
@@ -13,7 +13,7 @@
         <div class="col-md-12">
             <div class="box box-primary">
                 <div class="box-header">
-                    <h3 class="box-title">收藏列表</h3>
+                    <h3 class="box-title">预告列表</h3>
                     <div class="box-tools">
                         <div class="input-group input-group-sm" style="width: 150px;">
                             <input type="text" name="table_search" class="form-control pull-right"
@@ -31,15 +31,17 @@
                         <tbody>
                         <tr>
                             <th>编号</th>
-                            <th>电影</th>
-                            <th>用户</th>
+                            <th>预告标题</th>
+                            <th>预告封面</th>
                             <th>添加时间</th>
                             <th>操作事项</th>
                         </tr>
                         <tr>
                             <td>1</td>
                             <td>环太平洋</td>
-                            <td>张小明</td>
+                            <td>
+                                <img data-src="holder.js/140x64" class="img-responsive center-block" alt="">
+                            </td>
                             <td>2017-06-01</td>
                             <td>
                                 <a class="label label-success">编辑</a>
