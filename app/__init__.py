@@ -7,7 +7,7 @@
 # @MyBlog  : WWW.SHUJIAN.ORG
 # @NetName : 書劍
 # @Software: TheMovie
-from flask import Flask
+from flask import Flask, render_template
 
 app = Flask(__name__)
 app.debug = True
@@ -17,3 +17,7 @@ from app.home import home
 
 app.register_blueprint(admin, url_prefix="/admin")
 app.register_blueprint(home)
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("home/404.html"), 404
