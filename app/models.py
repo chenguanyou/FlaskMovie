@@ -8,15 +8,7 @@
 # @NetName : 書劍
 # @Software: TheMovie
 from datetime import datetime
-
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-import pymysql
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:12345678@127.0.0.1:3306/movie"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-db = SQLAlchemy(app)
+from app import db
 
 
 class User(db.Model):
@@ -239,6 +231,12 @@ class Admin(db.Model):
 
     def __repr__(self):
         return '<Admin {0}>'.format(self.name)
+
+    # 验证密码
+    def check_pwd(self, pwd):
+        from werkzeug.security import check_password_hash
+        #
+        return check_password_hash(self.pwd, pwd)
 
 
 class AdminLog(db.Model):

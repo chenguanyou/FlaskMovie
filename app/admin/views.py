@@ -11,113 +11,154 @@ from app.admin import admin
 from flask import render_template
 from flask import redirect
 from flask import url_for
+from flask import flash  # 消息闪现
+from flask import session  # 登陆成功后建立会话
+from app.admin.forms import LoginForm  # 导入自定义的账号密码验证器
+from app.models import Admin  # 导入管理员数据库模型
+from app.admin.decorator import admin_login_req  # 导入访问权限装饰器
 
 
 @admin.route("/")
+@admin_login_req
 def index():
     return render_template("admin/index.html")
 
 
-@admin.route("/login/")
+# 登陆
+@admin.route("/login/", methods=['GET', 'POST'])
 def login():
-    return render_template("admin/login.html")
+    # 进行表单实例化
+    form = LoginForm()
+    # 提交表单的时候进行验证
+    if form.validate_on_submit():
+        # 获取表单的账号密码
+        data = form.data
+        admin = Admin.query.filter_by(name=data["account"]).first()
+        if not admin.check_pwd(data["pwd"]):
+            flash("密码错误")
+            return redirect(url_for("admin.login"))
+        # 账号密码正确
+        session["admin"] = data["account"]
+        return redirect(url_for("admin.index"))
+    return render_template("admin/login.html", form=form)
 
 
 @admin.route("/logout/")
+@admin_login_req
 def logout():
+    session.pop('admin', None)
     return redirect(url_for('admin.login'))
 
 
 @admin.route("/pwd/")
+@admin_login_req
 def pwd():
     return render_template("admin/pwd.html")
 
 
 @admin.route("/tagadd/")
+@admin_login_req
 def tagAdd():
     return render_template("admin/tag_add.html")
 
 
 @admin.route("/taglist/")
+@admin_login_req
 def tagList():
     return render_template("admin/tag_list.html")
 
 
 @admin.route("/movieAdd/")
+@admin_login_req
 def movieAdd():
     return render_template("admin/movie_add.html")
 
 
 @admin.route("/movieList/")
+@admin_login_req
 def movieList():
     return render_template("admin/movie_list.html")
 
 
 @admin.route("/previewAdd/")
+@admin_login_req
 def previewAdd():
     return render_template("admin/preview_add.html")
 
 
 @admin.route("/previewList/")
+@admin_login_req
 def previewList():
     return render_template("admin/preview_list.html")
 
 
 @admin.route("/userList/")
+@admin_login_req
 def userList():
     return render_template("admin/user_list.html")
 
 
 @admin.route("/commentList/")
+@admin_login_req
 def commentList():
     return render_template("admin/comment_list.html")
 
 
 @admin.route("/moviecolList/")
+@admin_login_req
 def moviecolList():
     return render_template("admin/moviecol_list.html")
 
 
 @admin.route("/oplogList/")
+@admin_login_req
 def oplogList():
     return render_template("admin/oplog_list.html")
 
 
 @admin.route("/adminLoginLogList/")
+@admin_login_req
 def adminLoginLogList():
     return render_template("admin/adminloginlog_list.html")
 
 
 @admin.route("/userLoginLogList/")
+@admin_login_req
 def userLoginLogList():
     return render_template("admin/userloginlog_list.html")
 
 
 @admin.route("/authAdd/")
+@admin_login_req
 def authAdd():
     return render_template("admin/auth_add.html")
 
 
 @admin.route("/authList/")
+@admin_login_req
 def authList():
     return render_template("admin/auth_list.html")
 
 
 @admin.route("/roleAdd/")
+@admin_login_req
 def roleAdd():
     return render_template("admin/role_add.html")
 
 
 @admin.route("/roleList/")
+@admin_login_req
 def roleList():
     return render_template("admin/role_list.html")
 
 
 @admin.route("/adminadd/")
+@admin_login_req
 def adminAdd():
     return render_template("admin/admin_add.html")
 
 
 @admin.route("/adminlist")
+@admin_login_req
 def adminList():
     return render_template("admin/admin_list.html")
