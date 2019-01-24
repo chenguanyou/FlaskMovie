@@ -7,6 +7,7 @@
 # @MyBlog  : WWW.SHUJIAN.ORG
 # @NetName : 書劍
 # @Software: TheMovie
+from app import db
 from app.admin import admin
 from flask import render_template
 from flask import redirect
@@ -14,10 +15,13 @@ from flask import url_for
 from flask import flash  # 消息闪现
 from flask import session  # 登陆成功后建立会话
 from app.admin.forms import LoginForm  # 导入自定义的账号密码验证器
+from app.admin.forms import TagForm  # 导入标签验证表单
 from app.models import Admin  # 导入管理员数据库模型
+from app.models import Tag  # 导入标签数据库模型
 from app.admin.decorator import admin_login_req  # 导入访问权限装饰器
 
 
+# 首页视图
 @admin.route("/")
 @admin_login_req
 def index():
@@ -43,6 +47,7 @@ def login():
     return render_template("admin/login.html", form=form)
 
 
+# 退出
 @admin.route("/logout/")
 @admin_login_req
 def logout():
@@ -56,16 +61,39 @@ def pwd():
     return render_template("admin/pwd.html")
 
 
-@admin.route("/tagadd/")
+# 添加标签
+@admin.route("/tagadd/", methods=['GET', 'POST'])
 @admin_login_req
 def tagAdd():
-    return render_template("admin/tag_add.html")
+    form = TagForm()
+    if form.validate_on_submit():
+        data = form.data
+        tagnum = Tag.query.filter_by(name=data.get('name', None)).count()
+        if tagnum != 0:
+            flash("标签重复")
+            return redirect(url_for("admin.tagAdd"))
+        newtag = Tag(
+            name=data.get('name'),
+
+        )
+        # 不管是修改或者是增加一定要进行提交，不然是不会生效的
+        db.session.add(newtag)
+        db.session.commit()
+        flash("标签添加成功")
+        return redirect(url_for("admin.tagAdd"))
+    return render_template("admin/tag_add.html", form=form)
 
 
-@admin.route("/taglist/")
-@admin_login_req
-def tagList():
-    return render_template("admin/tag_list.html")
+# 展示标签列表
+@admin.route("/taglist/<int:page>/", methods=["GET"])
+# @admin_login_req
+def tagList(page=None):
+    if page is None:
+        page = 1
+    page_data = Tag.query.order_by(
+        Tag.addtime.desc()  # 按照时间排序
+    ).paginate(page=page, per_page=1)  # page是页数，per_page每页显示的数据数量
+    return render_template("admin/tag_list.html", page_data=page_data)
 
 
 @admin.route("/movieAdd/")

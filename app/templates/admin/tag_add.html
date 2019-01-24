@@ -15,15 +15,24 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">添加标签</h3>
                 </div>
-                <form role="form">
+                {% for msg in get_flashed_messages() %}
+                <p class="login-box-msg" style="color: red;">{{ msg }}</p>
+                {% endfor %}
+                <form role="form" method="post">
                     <div class="box-body">
                         <div class="form-group">
-                            <label for="input_name">标签名称</label>
-                            <input type="text" class="form-control" id="input_name" placeholder="请输入标签名称！">
+                            <label for="input_name">{{ form.name.label }}</label>
+                            {{ form.name }}
                         </div>
+                        {% for err in form.name.errors %}
+                        <div class="col-md-12">
+                            <font style="color: red;">{{ err }}</font>
+                        </div>
+                        {% endfor %}
                     </div>
                     <div class="box-footer">
-                        <button type="submit" class="btn btn-primary">添加</button>
+                        {{ form.csrf_token }}
+                        {{ form.submit }}
                     </div>
                 </form>
             </div>
