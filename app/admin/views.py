@@ -88,10 +88,6 @@ def tagAdd():
 @admin.route('/taglist/<int:page>/', methods=['GET'])
 @admin_login_req
 def tagList(page=None):
-    '''
-    标签列表
-    :return:
-    '''
     if page is None:
         page = 1
     # Tag.addtime.desc()  # 按照时间排序
@@ -99,6 +95,18 @@ def tagList(page=None):
     page_data = Tag.query.order_by(Tag.addtime.desc()).paginate(page=page, per_page=5)  # 查询数据并进行分页
 
     return render_template('admin/tag_list.html', page_data=page_data)
+
+
+# 标签的删除
+@admin.route('/tagdel/<int:id>/', methods=['GET'])
+@admin_login_req
+def tagDel(id=None):
+    if id is not None:
+        tag = Tag.query.filter_by(id=id).first_or_404()
+        db.session.delete(tag)
+        db.session.commit()
+        flash("删除成功")
+        return redirect(url_for("admin.tagList", page=1))
 
 
 @admin.route("/movieAdd/")

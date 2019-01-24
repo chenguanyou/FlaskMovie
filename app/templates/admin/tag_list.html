@@ -27,6 +27,9 @@
                         </div>
                     </div>
                 </div>
+                {% for msg in get_flashed_messages() %}
+                <p class="login-box-msg" style="color: red;">{{ msg }}</p>
+                {% endfor %}
                 <div class="box-body table-responsive no-padding">
                     <table class="table table-hover">
                         <tbody>
@@ -44,7 +47,7 @@
                             <td>
                                 <a class="label label-success">编辑</a>
                                 &nbsp;
-                                <a class="label label-danger">删除</a>
+                                <a href="{{ url_for('admin.tagDel', id=v.id) }}" class="label label-danger">删除</a>
                             </td>
                         </tr>
                         {% endfor %}
