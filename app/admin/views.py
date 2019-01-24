@@ -93,6 +93,7 @@ def tagList(page=None):
     page_data = Tag.query.order_by(
         Tag.addtime.desc()  # 按照时间排序
     ).paginate(page=page, per_page=1)  # page是页数，per_page每页显示的数据数量
+    print(page_data)
     return render_template("admin/tag_list.html", page_data=page_data)
 
 

@@ -1,6 +1,6 @@
 {% extends 'admin/admin.html' %}
 {% block content %}
-{% import 'ui/admin_page.html' as pagess %}
+{% import 'ui/admin_page.html' as pag %}
 
 <section class="content-header">
     <h1>微电影管理系统</h1>
@@ -52,7 +52,7 @@
                     </table>
                 </div>
                 <div class="box-footer clearfix">
-                    {{ pagess.page(page_data, 'admin.tagList') }}
+                    {{ pag.page(page_data, 'admin.tagList') }}
                 </div>
             </div>
         </div>
