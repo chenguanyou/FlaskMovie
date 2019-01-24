@@ -85,16 +85,20 @@ def tagAdd():
 
 
 # 展示标签列表
-@admin.route("/taglist/<int:page>/", methods=["GET"])
-# @admin_login_req
+@admin.route('/taglist/<int:page>/', methods=['GET'])
+@admin_login_req
 def tagList(page=None):
+    '''
+    标签列表
+    :return:
+    '''
     if page is None:
         page = 1
-    page_data = Tag.query.order_by(
-        Tag.addtime.desc()  # 按照时间排序
-    ).paginate(page=page, per_page=1)  # page是页数，per_page每页显示的数据数量
-    print(page_data)
-    return render_template("admin/tag_list.html", page_data=page_data)
+    # Tag.addtime.desc()  # 按照时间排序
+    # paginate(page=page, per_page=5) page是页数，per_page每页显示的数据数量
+    page_data = Tag.query.order_by(Tag.addtime.desc()).paginate(page=page, per_page=5)  # 查询数据并进行分页
+
+    return render_template('admin/tag_list.html', page_data=page_data)
 
 
 @admin.route("/movieAdd/")
