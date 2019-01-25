@@ -7,6 +7,8 @@
 # @MyBlog  : WWW.SHUJIAN.ORG
 # @NetName : 書劍
 # @Software: TheMovie
+import os
+from app import app
 from app import db
 from app.admin import admin
 from flask import render_template
@@ -16,9 +18,13 @@ from flask import flash  # 消息闪现
 from flask import session  # 登陆成功后建立会话
 from app.admin.forms import LoginForm  # 导入自定义的账号密码验证器
 from app.admin.forms import TagForm  # 导入标签验证表单
+from app.admin.forms import MovieForm  # 导入电影添加验证表单
 from app.models import Admin  # 导入管理员数据库模型
 from app.models import Tag  # 导入标签数据库模型
+from app.models import Movie  # 导入电影数据库模型
 from app.admin.decorator import admin_login_req  # 导入访问权限装饰器
+
+from app.admin.updata import change_filename  # 更改长传的文件名
 
 
 # 首页视图
@@ -90,8 +96,6 @@ def tagAdd():
 def tagList(page=None):
     if page is None:
         page = 1
-    # Tag.addtime.desc()  # 按照时间排序
-    # paginate(page=page, per_page=5) page是页数，per_page每页显示的数据数量
     page_data = Tag.query.order_by(Tag.addtime.desc()).paginate(page=page, per_page=5)  # 查询数据并进行分页
 
     return render_template('admin/tag_list.html', page_data=page_data)
@@ -115,7 +119,6 @@ def tagDel(id=None):
 def tagEdit(id=None):
     form = TagForm()
     tag = Tag.query.get_or_404(id)
-
     if form.validate_on_submit():
         data = form.data
         tagnum = Tag.query.filter_by(name=data.get('name', None)).count()
@@ -131,16 +134,59 @@ def tagEdit(id=None):
     return render_template("admin/tag_edit.html", form=form, tag=tag)
 
 
-@admin.route("/movieAdd/")
+# 添加电影
+@admin.route("/movieAdd/", methods=["GET", "POST"])
 @admin_login_req
 def movieAdd():
-    return render_template("admin/movie_add.html")
+    form = MovieForm()
+    if form.validate_on_submit():
+        data = form.data
+        # 获取到视频的地址
+        file_url = form.url.data.filename
+        # 获取到封面文件
+        file_logo = form.logo.data.filename
+        # 定义文件的保存
+        # 文件是否存在
+        if not os.path.exists(app.config['UP_DIR']):
+            # 如果不存在就创建
+            os.mkdir(app.config['UP_DIR'])
+        # 对视频的名称进行重命名
+        url = change_filename(file_url)
+        # 对封面图片进行重命名
+        logo = change_filename(file_logo)
+        # 保存视频
+        form.url.data.save(app.config["UP_DIR"] + url)
+        # 保存封面
+        form.logo.data.save(app.config["UP_DIR"] + logo)
+        movie = Movie(
+            title=data.get('title'),
+            url=url,
+            info=data.get('info'),
+            logo=logo,
+            star=int(data.get('star')),
+            playnum=0,
+            commentnum=0,
+            tag_id=int(data.get('tag_id')),
+            arga=data.get('arga'),
+            release_time=data.get('release_time'),
+            length=data.get('length')
+        )
+        db.session.add(movie)
+        db.session.commit()
+        flash("电影添加成功")
+        return redirect(url_for("admin.movieAdd"))
+    return render_template("admin/movie_add.html", form=form)
 
 
-@admin.route("/movieList/")
-@admin_login_req
-def movieList():
-    return render_template("admin/movie_list.html")
+# 电影列表
+@admin.route("/movieList/<int:page>", methods=["GET", "POST"])
+# @admin_login_req
+def movieList(page=None):
+    if page is None:
+        page = 1
+    page_data = Movie.query.order_by(Movie.addtime.desc()).paginate(page=page, per_page=1)  # 查询到数据进行分页
+
+    return render_template("admin/movie_list.html", page_data=page_data)
 
 
 @admin.route("/previewAdd/")
