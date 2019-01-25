@@ -109,6 +109,28 @@ def tagDel(id=None):
         return redirect(url_for("admin.tagList", page=1))
 
 
+# 标签的编辑
+@admin.route("/tagedit/<int:id>", methods=['GET', 'POST'])
+@admin_login_req
+def tagEdit(id=None):
+    form = TagForm()
+    tag = Tag.query.get_or_404(id)
+
+    if form.validate_on_submit():
+        data = form.data
+        tagnum = Tag.query.filter_by(name=data.get('name', None)).count()
+        if tag.name != data.get('name') and tagnum == 1:
+            flash("标签重复")
+            return redirect(url_for("admin.tagEdit", id=id))
+        tag.name = data.get('name')
+        # 不管是修改或者是增加一定要进行提交，不然是不会生效的
+        db.session.add(tag)
+        db.session.commit()
+        flash("标签编辑成功")
+        return redirect(url_for("admin.tagEdit", id=id))
+    return render_template("admin/tag_edit.html", form=form, tag=tag)
+
+
 @admin.route("/movieAdd/")
 @admin_login_req
 def movieAdd():
