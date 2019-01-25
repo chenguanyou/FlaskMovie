@@ -123,7 +123,7 @@ def tagEdit(id=None):
             flash("标签重复")
             return redirect(url_for("admin.tagEdit", id=id))
         tag.name = data.get('name')
-        # 不管是修改或者是增加一定要进行提交，不然是不会生效的
+        # 不管是修改或者是增加一定要进行提交，不然是不会生效的.
         db.session.add(tag)
         db.session.commit()
         flash("标签编辑成功")
