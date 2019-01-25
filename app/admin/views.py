@@ -14,6 +14,7 @@ from app.admin import admin
 from flask import render_template
 from flask import redirect
 from flask import url_for
+from flask import request
 from flask import flash  # 消息闪现
 from flask import session  # 登陆成功后建立会话
 from app.admin.forms import LoginForm  # 导入自定义的账号密码验证器
@@ -202,6 +203,60 @@ def movieDelete(id=None):
         db.session.commit()
         flash("删除成功")
     return redirect(url_for("admin.movieList", page=1))
+
+
+# 电影信息的编辑
+@admin.route("/movieEdit/<int:id>", methods=["GET", "POST"])
+@admin_login_req
+def movieEdit(id=None):
+    if id is not None:
+        form = MovieForm()
+        movie = Movie.query.get_or_404(id)
+        if request.method == "GET":
+            form.info.data = movie.info
+            form.star.data = movie.star
+            form.tag_id.data = movie.tag_id
+        if form.validate_on_submit():
+            data = form.data
+            # 获取到视频的地址
+            file_url = form.url.data.filename
+            # 获取到封面文件
+            file_logo = form.logo.data.filename
+            # 定义文件的保存
+            # 文件是否存在
+            if not os.path.exists(app.config['UP_DIR']):
+                # 如果不存在就创建
+                os.mkdir(app.config['UP_DIR'])
+            # 对视频的名称进行重命名
+            url = change_filename(file_url)
+            # 对封面图片进行重命名
+            logo = change_filename(file_logo)
+            # 保存视频
+            form.url.data.save(app.config["UP_DIR"] + url)
+            # 保存封面
+            form.logo.data.save(app.config["UP_DIR"] + logo)
+            # 删除之前的数据, 如果文件不存在，有可能抛出异常
+            try:
+                # 删除视频文件
+                os.remove(app.config["UP_DIR"] + movie.url)
+                # 删除封面图
+                os.remove(app.config["UP_DIR"] + movie.logo)
+            except:
+                pass
+            movie.title = data.get('title')
+            movie.url = url
+            movie.info = data.get('info')
+            movie.logo = logo
+            movie.star = int(data.get('star'))
+            movie.tag_id = int(data.get('tag_id'))
+            movie.arga = data.get('arga')
+            movie.release_time = data.get('release_time')
+            movie.length = data.get('length')
+            db.session.add(movie)
+            db.session.commit()
+            flash("电影修改成功")
+            return redirect(url_for("admin.movieEdit", id=id))
+        return render_template("admin/movie_edit.html", form=form, movie=movie)
 
 
 @admin.route("/previewAdd/")

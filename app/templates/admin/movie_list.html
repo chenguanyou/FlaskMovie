@@ -50,14 +50,14 @@
                             <td>{{i.id}}</td>
                             <td>{{i.title}}</td>
                             <td>{{i.length}}分钟</td>
-                            <td>{{i.tag_id}}</td>
+                            <td>{{i.tag.name}}</td>
                             <td>{{i.arga}}</td>
                             <td>{{i.star}}</td>
                             <td>{{i.playnum}}</td>
                             <td>{{i.commentnum}}</td>
                             <td>{{i.release_time}}</td>
                             <td>
-                                <a class="label label-success">编辑</a>
+                                <a href="{{ url_for('admin.movieEdit', id=i.id) }}" class="label label-success">编辑</a>
                                 &nbsp;
                                 <a href="{{ url_for('admin.movieDelete', id=i.id) }}" class="label label-danger">删除</a>
                             </td>
