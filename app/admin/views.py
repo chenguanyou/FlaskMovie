@@ -180,13 +180,28 @@ def movieAdd():
 
 # 电影列表
 @admin.route("/movieList/<int:page>", methods=["GET", "POST"])
-# @admin_login_req
+@admin_login_req
 def movieList(page=None):
     if page is None:
         page = 1
-    page_data = Movie.query.order_by(Movie.addtime.desc()).paginate(page=page, per_page=1)  # 查询到数据进行分页
-
+    page_data = Movie.query.order_by(Movie.addtime.desc()).paginate(page=page, per_page=10)  # 查询到数据进行分页
     return render_template("admin/movie_list.html", page_data=page_data)
+
+
+# 电影删除
+@admin.route("/movieDelete/<int:id>", methods=["GET", "POST"])
+@admin_login_req
+def movieDelete(id=None):
+    if id is not None:
+        movie = Movie.query.filter_by(id=id).first_or_404()
+        # 删除视频文件
+        os.remove(app.config["UP_DIR"] + movie.url)
+        # 删除封面图
+        os.remove(app.config["UP_DIR"] + movie.logo)
+        db.session.delete(movie)
+        db.session.commit()
+        flash("删除成功")
+    return redirect(url_for("admin.movieList", page=1))
 
 
 @admin.route("/previewAdd/")
