@@ -35,6 +35,8 @@ from app.admin.updata import change_filename  # 更改长传的文件名
 
 from werkzeug.security import generate_password_hash  # 密码加密工具
 
+from app.admin.context import tpl_extra  # 导入全局上下文管理器
+
 
 # 首页视图
 @admin.route("/")
