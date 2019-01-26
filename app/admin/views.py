@@ -30,6 +30,7 @@ from app.models import User  # 导入会员数据模型
 from app.models import Comment  # 导入评论列表
 from app.models import MovieCol  # 导入电影收藏数据模型
 from app.models import OpLog  # 管理员操作日志
+from app.models import AdminLog  # 管理员登陆日志
 from app.admin.decorator import admin_login_req  # 导入访问权限装饰器
 
 from app.admin.updata import change_filename  # 更改长传的文件名
@@ -62,6 +63,12 @@ def login():
         # 账号密码正确
         session["admin"] = data["account"]
         session["admin_id"] = admin.id
+        adminlog = AdminLog(
+            admin_id=admin.id,
+            ip=request.remote_addr
+        )
+        db.session.add(adminlog)
+        db.session.commit()
         return redirect(url_for("admin.index"))
     return render_template("admin/login.html", form=form)
 
@@ -544,10 +551,14 @@ def oplogList(page=None):
     return render_template("admin/oplog_list.html", page_data=page_data)
 
 
-@admin.route("/adminLoginLogList/")
+# 管理员登陆日志
+@admin.route("/adminLoginLogList/<int:page>", methods=["GET"])
 @admin_login_req
-def adminLoginLogList():
-    return render_template("admin/adminloginlog_list.html")
+def adminLoginLogList(page=None):
+    if page is None:
+        page = 1
+    page_data = AdminLog.query.order_by(AdminLog.add_time.desc()).paginate(page=page, per_page=5)
+    return render_template("admin/adminloginlog_list.html", page_data=page_data)
 
 
 @admin.route("/userLoginLogList/")
