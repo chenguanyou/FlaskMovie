@@ -26,6 +26,7 @@ from app.models import Tag  # 导入标签数据库模型
 from app.models import Movie  # 导入电影数据库模型
 from app.models import PreView  # 导入电影预告片数据模型
 from app.models import User  # 导入会员数据模型
+from app.models import Comment  # 导入评论列表
 from app.admin.decorator import admin_login_req  # 导入访问权限装饰器
 
 from app.admin.updata import change_filename  # 更改长传的文件名
@@ -356,7 +357,7 @@ def perViewEdit(id=None):
 def userList(page=None):
     if page is None:
         page = 1
-    page_data = User.query.order_by(User.addtime.desc()).paginate(page=page, per_page=1)
+    page_data = User.query.order_by(User.addtime.desc()).paginate(page=page, per_page=10)
     return render_template("admin/user_list.html", page_data=page_data)
 
 
@@ -380,10 +381,14 @@ def userDelete(id=None):
         return redirect(url_for('admin.userList', page=1))
 
 
-@admin.route("/commentList/")
+# 评论列表
+@admin.route("/commentList/<int:page>", methods=["GET", "POST"])
 @admin_login_req
-def commentList():
-    return render_template("admin/comment_list.html")
+def commentList(page=None):
+    if page is None:
+        page = 1
+    page_data = Comment.query.order_by(Comment.addtime.desc()).paginate(page=page, per_page=1)
+    return render_template("admin/comment_list.html", page_data=page_data)
 
 
 @admin.route("/moviecolList/")
