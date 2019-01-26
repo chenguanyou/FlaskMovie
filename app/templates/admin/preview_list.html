@@ -36,11 +36,14 @@
                             <th>添加时间</th>
                             <th>操作事项</th>
                         </tr>
+                        {% for v in page_data.items %}
                         <tr>
-                            <td>1</td>
-                            <td>环太平洋</td>
+                            <td>{{v.id}}</td>
+                            <td>{{v.title}}</td>
                             <td>
-                                <img data-src="holder.js/140x64" class="img-responsive center-block" alt="">
+                                <img width="60px" src="{{ url_for('static', filename='uploads/'+v.logo) }}"
+                                     data-src="holder.js/140x64"
+                                     class="img-responsive center-block" alt="">
                             </td>
                             <td>2017-06-01</td>
                             <td>
@@ -49,6 +52,7 @@
                                 <a class="label label-danger">删除</a>
                             </td>
                         </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>

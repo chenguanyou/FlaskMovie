@@ -289,10 +289,14 @@ def previewAdd():
     return render_template("admin/preview_add.html", form=form)
 
 
-@admin.route("/previewList/")
-@admin_login_req
-def previewList():
-    return render_template("admin/preview_list.html")
+# 预告片列表
+@admin.route("/previewList/<int:page>", methods=["GET"])
+# @admin_login_req
+def previewList(page=None):
+    if page is None:
+        page = 1
+    page_data = PreView.query.order_by(PreView.addtime.desc()).paginate(page=page, per_page=1)  # 查询到数据进行分页
+    return render_template("admin/preview_list.html", page_data=page_data)
 
 
 @admin.route("/userList/")
