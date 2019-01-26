@@ -25,6 +25,7 @@ from app.models import Admin  # 导入管理员数据库模型
 from app.models import Tag  # 导入标签数据库模型
 from app.models import Movie  # 导入电影数据库模型
 from app.models import PreView  # 导入电影预告片数据模型
+from app.models import User  # 导入会员数据模型
 from app.admin.decorator import admin_login_req  # 导入访问权限装饰器
 
 from app.admin.updata import change_filename  # 更改长传的文件名
@@ -295,7 +296,7 @@ def previewAdd():
 def previewList(page=None):
     if page is None:
         page = 1
-    page_data = PreView.query.order_by(PreView.addtime.desc()).paginate(page=page, per_page=1)  # 查询到数据进行分页
+    page_data = PreView.query.order_by(PreView.addtime.desc()).paginate(page=page, per_page=10)  # 查询到数据进行分页
     return render_template("admin/preview_list.html", page_data=page_data)
 
 
@@ -349,10 +350,24 @@ def perViewEdit(id=None):
         return render_template("admin/preview_edit.html", form=form, preview=preview)
 
 
-@admin.route("/userList/")
+# 会员列表
+@admin.route("/userList/<int:page>", methods=["GET", "POST"])
 @admin_login_req
-def userList():
-    return render_template("admin/user_list.html")
+def userList(page=None):
+    if page is None:
+        page = 1
+    page_data = User.query.order_by(User.addtime.desc()).paginate(page=page, per_page=1)
+    return render_template("admin/user_list.html", page_data=page_data)
+
+
+# 会员详情
+@admin.route("/userview/")
+@admin_login_req
+def userView():
+    return render_template("admin/user_view.html")
+
+
+#
 
 
 @admin.route("/commentList/")
