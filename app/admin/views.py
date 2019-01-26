@@ -291,7 +291,7 @@ def previewAdd():
 
 # 预告片列表
 @admin.route("/previewList/<int:page>", methods=["GET"])
-# @admin_login_req
+@admin_login_req
 def previewList(page=None):
     if page is None:
         page = 1
@@ -301,7 +301,7 @@ def previewList(page=None):
 
 # 预告片删除
 @admin.route("/previewDel/<int:id>", methods=["GET", "POST"])
-# @admin_login_req
+@admin_login_req
 def perViewDel(id=None):
     if id is not None:
         preview = PreView.query.filter_by(id=id).first_or_404()
@@ -312,6 +312,41 @@ def perViewDel(id=None):
         db.session.commit()
         flash("删除成功")
     return redirect(url_for('admin.previewList', page=1))
+
+
+# 预告片的编辑
+@admin.route("/previewEdit/<int:id>", methods=["GET", "POST"])
+@admin_login_req
+def perViewEdit(id=None):
+    if id is not None:
+        form = PreViewForm()
+        preview = PreView.query.get_or_404(id)
+        if form.validate_on_submit():
+            data = form.data
+            # 获取到封面文件
+            file_logo = form.logo.data.filename
+
+            # 判断文件夹是否存在
+            if not os.path.exists(app.config['UP_DIR']):
+                # 如果不存在就创建
+                os.mkdir(app.config['UP_DIR'])
+            # 对封面文件进行重名了
+            logo = change_filename(file_logo)
+            # 保存封面文件
+            form.logo.data.save(app.config['UP_DIR'] + logo)
+
+            # 对旧的封面图进行删除
+            try:
+                os.remove(app.config['UP_DIR'] + preview.logo)
+            except:
+                pass
+            preview.title = data.get('title')
+            preview.logo = logo
+            db.session.add(preview)
+            db.session.commit()
+            flash("预告片编辑成功")
+            return redirect(url_for("admin.perViewEdit", id=id))
+        return render_template("admin/preview_edit.html", form=form, preview=preview)
 
 
 @admin.route("/userList/")
