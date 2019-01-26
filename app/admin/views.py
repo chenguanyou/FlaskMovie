@@ -31,6 +31,7 @@ from app.models import Comment  # 导入评论列表
 from app.models import MovieCol  # 导入电影收藏数据模型
 from app.models import OpLog  # 管理员操作日志
 from app.models import AdminLog  # 管理员登陆日志
+from app.models import UserLog  # 导入用户的登陆日志数据模型
 from app.admin.decorator import admin_login_req  # 导入访问权限装饰器
 
 from app.admin.updata import change_filename  # 更改长传的文件名
@@ -561,10 +562,14 @@ def adminLoginLogList(page=None):
     return render_template("admin/adminloginlog_list.html", page_data=page_data)
 
 
-@admin.route("/userLoginLogList/")
+# 用户登陆日志
+@admin.route("/userLoginLogList/<int:page>", methods=["GET"])
 @admin_login_req
-def userLoginLogList():
-    return render_template("admin/userloginlog_list.html")
+def userLoginLogList(page=None):
+    if page is None:
+        page = 1
+    page_data = UserLog.query.order_by(UserLog.add_time.desc()).paginate(page=page, per_page=5)
+    return render_template("admin/userloginlog_list.html", page_data=page_data)
 
 
 @admin.route("/authAdd/")
