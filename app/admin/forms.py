@@ -100,7 +100,7 @@ class TagForm(FlaskForm):
     )
 
 
-# 电影的添加
+# 电影的表单验证
 class MovieForm(FlaskForm):
     title = StringField(
         label="片名",
@@ -217,6 +217,42 @@ class MovieForm(FlaskForm):
         }
     )
 
+    submit = SubmitField(
+        label="编辑",
+        render_kw={
+            "class": "btn btn-primary",
+            "required": "required"
+        }
+    )
+
+
+# 预告片的表单验证
+class PreViewForm(FlaskForm):
+    # 验证预告片的名称
+    title = StringField(
+        label="名称",
+        validators=[
+            DataRequired("请输入预告片名称！")
+        ],
+        description="名称",
+        render_kw={
+            "class": "form-control",
+            "id": "input_title",
+            "placeholder": "请输入预告标题!",
+            "required": "required",
+        }
+    )
+
+    # 验证预告片的封面
+    logo = FileField(
+        label="封面",
+        validators=[
+            DataRequired("请上传封面！")
+        ],
+        description="封面",
+    )
+
+    # 进行提交
     submit = SubmitField(
         label="编辑",
         render_kw={

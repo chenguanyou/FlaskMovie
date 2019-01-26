@@ -20,9 +20,11 @@ from flask import session  # 登陆成功后建立会话
 from app.admin.forms import LoginForm  # 导入自定义的账号密码验证器
 from app.admin.forms import TagForm  # 导入标签验证表单
 from app.admin.forms import MovieForm  # 导入电影添加验证表单
+from app.admin.forms import PreViewForm  # 导入电影预告片的表单验证
 from app.models import Admin  # 导入管理员数据库模型
 from app.models import Tag  # 导入标签数据库模型
 from app.models import Movie  # 导入电影数据库模型
+from app.models import PreView  # 导入电影预告片数据模型
 from app.admin.decorator import admin_login_req  # 导入访问权限装饰器
 
 from app.admin.updata import change_filename  # 更改长传的文件名
@@ -259,10 +261,32 @@ def movieEdit(id=None):
         return render_template("admin/movie_edit.html", form=form, movie=movie)
 
 
-@admin.route("/previewAdd/")
+# 添加预告片
+@admin.route("/previewAdd/", methods=["GET", "POST"])
 @admin_login_req
 def previewAdd():
-    return render_template("admin/preview_add.html")
+    form = PreViewForm()
+    if form.validate_on_submit():
+        data = form.data
+        # 获取到封面文件
+        file_logo = form.logo.data.filename
+
+        # 判断文件夹是否存在
+        if not os.path.exists(app.config['UP_DIR']):
+            # 如果不存在就创建
+            os.mkdir(app.config['UP_DIR'])
+        # 对封面文件进行重名了
+        logo = change_filename(file_logo)
+        # 保存封面文件
+        form.logo.data.save(app.config['UP_DIR'] + logo)
+        preview = PreView(
+            title=data.get('title'),
+            logo=logo
+        )
+        db.session.add(preview)
+        db.session.commit()
+        flash("预告片添加成功")
+    return render_template("admin/preview_add.html", form=form)
 
 
 @admin.route("/previewList/")

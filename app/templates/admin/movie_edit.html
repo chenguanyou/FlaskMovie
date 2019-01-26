@@ -58,7 +58,7 @@
                             <!--报错信息-->
                             <label for="input_logo">{{ form.logo.label }}</label>
                             {{ form.logo(value=movie.logo) }}
-                            <img src="{{ url_for('static', filename='uploads/'+movie.logo) }}"
+                            <img width="90px" src="{{ url_for('static', filename='uploads/'+movie.logo) }}"
                                  data-src="holder.js/262x166" style="margin-top:5px;" class="img-responsive"
                                  alt="">
                         </div>
