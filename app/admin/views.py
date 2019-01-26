@@ -27,6 +27,7 @@ from app.models import Movie  # 导入电影数据库模型
 from app.models import PreView  # 导入电影预告片数据模型
 from app.models import User  # 导入会员数据模型
 from app.models import Comment  # 导入评论列表
+from app.models import MovieCol  # 导入电影收藏数据模型
 from app.admin.decorator import admin_login_req  # 导入访问权限装饰器
 
 from app.admin.updata import change_filename  # 更改长传的文件名
@@ -404,10 +405,14 @@ def commentDelete(id=None):
         return redirect(url_for('admin.commentList', page=1))
 
 
-@admin.route("/moviecolList/")
+# 电影的收藏列表
+@admin.route("/moviecolList/<int:page>", methods=["GET", "POST"])
 @admin_login_req
-def moviecolList():
-    return render_template("admin/moviecol_list.html")
+def moviecolList(page=None):
+    if page is None:
+        page = 1
+    page_data = MovieCol.query.order_by(MovieCol.addtime.desc()).paginate(page=page, per_page=1)
+    return render_template("admin/moviecol_list.html", page_data=page_data)
 
 
 @admin.route("/oplogList/")

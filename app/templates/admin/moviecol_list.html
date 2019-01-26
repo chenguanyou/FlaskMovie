@@ -1,5 +1,6 @@
 {% extends 'admin/admin.html' %}
 {% block content %}
+{% import 'ui/admin_page.html' as pag %}
 <!--内容-->
 <section class="content-header">
     <h1>微电影管理系统</h1>
@@ -36,30 +37,22 @@
                             <th>添加时间</th>
                             <th>操作事项</th>
                         </tr>
+                        {% for v in page_data.items %}
                         <tr>
-                            <td>1</td>
-                            <td>环太平洋</td>
-                            <td>张小明</td>
-                            <td>2017-06-01</td>
+                            <td>{{v.id}}</td>
+                            <td>{{v.movie.title}}</td>
+                            <td>{{v.user.name}}</td>
+                            <td>{{v.addtime}}</td>
                             <td>
-                                <a class="label label-success">编辑</a>
-                                &nbsp;
                                 <a class="label label-danger">删除</a>
                             </td>
                         </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>
                 <div class="box-footer clearfix">
-                    <ul class="pagination pagination-sm no-margin pull-right">
-                        <li><a href="#">首页</a></li>
-                        <li><a href="#">上一页</a></li>
-                        <li><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li><a href="#">下一页</a></li>
-                        <li><a href="#">尾页</a></li>
-                    </ul>
+                    {{ pag.page(page_data, 'admin.moviecolList') }}
                 </div>
             </div>
         </div>
