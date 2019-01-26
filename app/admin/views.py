@@ -369,7 +369,15 @@ def userView(id=None):
     return render_template("admin/user_view.html", user=user)
 
 
-#
+# 会员删除
+@admin.route("/userDelete/<int:id>", methods=["GET", "POST"])
+@admin_login_req
+def userDelete(id=None):
+    if id is not None:
+        user = User.query.get_or_404(id)
+        db.session.delete(user)
+        db.session.commit()
+        return redirect(url_for('admin.userList', page=1))
 
 
 @admin.route("/commentList/")
