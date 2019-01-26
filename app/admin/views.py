@@ -378,6 +378,7 @@ def userDelete(id=None):
         user = User.query.get_or_404(id)
         db.session.delete(user)
         db.session.commit()
+        flash("删除成功")
         return redirect(url_for('admin.userList', page=1))
 
 
@@ -389,6 +390,18 @@ def commentList(page=None):
         page = 1
     page_data = Comment.query.order_by(Comment.addtime.desc()).paginate(page=page, per_page=1)
     return render_template("admin/comment_list.html", page_data=page_data)
+
+
+# 评论的删除
+@admin.route("/commentDelete/<int:id>", methods=["GET", "POST"])
+@admin_login_req
+def commentDelete(id=None):
+    if id is not None:
+        comment = Comment.query.get_or_404(id)
+        db.session.delete(comment)
+        db.session.commit()
+        flash("删除成功")
+        return redirect(url_for('admin.commentList', page=1))
 
 
 @admin.route("/moviecolList/")
