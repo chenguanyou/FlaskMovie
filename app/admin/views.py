@@ -361,10 +361,12 @@ def userList(page=None):
 
 
 # 会员详情
-@admin.route("/userview/")
+@admin.route("/userview/<int:id>", methods=["GET", "POST"])
 @admin_login_req
-def userView():
-    return render_template("admin/user_view.html")
+def userView(id=None):
+    if id is not None:
+        user = User.query.get_or_404(id)
+    return render_template("admin/user_view.html", user=user)
 
 
 #
