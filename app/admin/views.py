@@ -299,6 +299,21 @@ def previewList(page=None):
     return render_template("admin/preview_list.html", page_data=page_data)
 
 
+# 预告片删除
+@admin.route("/previewDel/<int:id>", methods=["GET", "POST"])
+# @admin_login_req
+def perViewDel(id=None):
+    if id is not None:
+        preview = PreView.query.filter_by(id=id).first_or_404()
+        # 删除封面图
+        os.remove(app.config['UP_DIR'] + preview.logo)
+        # 提交删除数据
+        db.session.delete(preview)
+        db.session.commit()
+        flash("删除成功")
+    return redirect(url_for('admin.previewList', page=1))
+
+
 @admin.route("/userList/")
 @admin_login_req
 def userList():
