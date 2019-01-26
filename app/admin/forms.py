@@ -8,6 +8,7 @@
 # @NetName : 書劍
 # @Software: TheMovie
 from flask_wtf import FlaskForm
+from flask import session
 from wtforms import StringField  # 验证字符串
 from wtforms import PasswordField  # 验证密码
 from wtforms import FileField  # 验证URL
@@ -260,3 +261,49 @@ class PreViewForm(FlaskForm):
             "required": "required"
         }
     )
+
+
+# 修改密码
+class PwdForm(FlaskForm):
+    old_pwd = PasswordField(
+        label="旧密码",
+        validators=[
+            DataRequired("请输入旧密码！")
+        ],
+        description="旧密码",
+        render_kw={
+            "class": "form-control",
+            "id": "input_pwd",
+            "placeholder": "请输入旧密码!",
+            "required": "flase",
+        },
+    )
+
+    new_pwd = PasswordField(
+        label="新密码",
+        validators=[
+            DataRequired("请输入新密码！")
+        ],
+        description="新密码",
+        render_kw={
+            "class": "form-control",
+            "id": "input_newpwd",
+            "placeholder": "请输入新密码!",
+            "required": "flase",
+        }
+    )
+
+    submit = SubmitField(
+        label="编辑",
+        render_kw={
+            "class": "btn btn-primary"
+        }
+    )
+
+    # 验证账号是否存在
+    def validate_old_pwd(self, field):
+        pwd = field.data
+        name = session.get("admin")
+        admin = Admin.query.filter_by(name=name).first()
+        if not admin.check_pwd(pwd):
+            raise ValidationError("旧密码错误")

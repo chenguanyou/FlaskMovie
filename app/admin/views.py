@@ -21,6 +21,7 @@ from app.admin.forms import LoginForm  # 导入自定义的账号密码验证器
 from app.admin.forms import TagForm  # 导入标签验证表单
 from app.admin.forms import MovieForm  # 导入电影添加验证表单
 from app.admin.forms import PreViewForm  # 导入电影预告片的表单验证
+from app.admin.forms import PwdForm  # 导入修改密码的表单验证
 from app.models import Admin  # 导入管理员数据库模型
 from app.models import Tag  # 导入标签数据库模型
 from app.models import Movie  # 导入电影数据库模型
@@ -31,6 +32,8 @@ from app.models import MovieCol  # 导入电影收藏数据模型
 from app.admin.decorator import admin_login_req  # 导入访问权限装饰器
 
 from app.admin.updata import change_filename  # 更改长传的文件名
+
+from werkzeug.security import generate_password_hash  # 密码加密工具
 
 
 # 首页视图
@@ -67,10 +70,22 @@ def logout():
     return redirect(url_for('admin.login'))
 
 
-@admin.route("/pwd/")
+# 修改密码
+@admin.route("/pwd/", methods=["GET", "POST"])
 @admin_login_req
 def pwd():
-    return render_template("admin/pwd.html")
+    form = PwdForm()
+    if form.validate_on_submit():
+        data = form.data
+        name = session.get("admin")
+        admin = Admin.query.filter_by(name=name).first()
+        print(admin)
+        admin.pwd = generate_password_hash(data.get('new_pwd'))
+        db.session.add(admin)
+        db.session.commit()
+        flash("密码修改成功，请重新登录")
+        return redirect(url_for('admin.logout'))
+    return render_template("admin/pwd.html", form=form)
 
 
 # 添加标签
