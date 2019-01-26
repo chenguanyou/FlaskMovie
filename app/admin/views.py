@@ -415,6 +415,18 @@ def moviecolList(page=None):
     return render_template("admin/moviecol_list.html", page_data=page_data)
 
 
+# 电影收藏的删除
+@admin.route("/moviecolDelete/<int:id>", methods=["GET", "POST"])
+@admin_login_req
+def movieColDelete(id=None):
+    if id is not None:
+        moviecol = MovieCol.query.get_or_404(id)
+        db.session.delete(moviecol)
+        db.session.commit()
+        flash("删除成功")
+        return redirect(url_for('admin.moviecolList', page=1))
+
+
 @admin.route("/oplogList/")
 @admin_login_req
 def oplogList():
