@@ -592,10 +592,11 @@ def authAdd():
     return render_template("admin/auth_add.html", form=form)
 
 
-@admin.route("/authList/")
+@admin.route("/authList/<int:page>", methods=["GET"])
 @admin_login_req
-def authList():
-    return render_template("admin/auth_list.html")
+def authList(page=1):
+    page_data = Auth.query.order_by(Auth.addtime.desc()).paginate(page=page, per_page=5)  # 权限列表
+    return render_template("admin/auth_list.html", page_data=page_data)
 
 
 @admin.route("/roleAdd/")
