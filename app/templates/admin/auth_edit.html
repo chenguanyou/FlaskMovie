@@ -1,0 +1,48 @@
+{% extends 'admin/admin.html' %}
+{% block content %}
+<!--内容-->
+<section class="content-header">
+    <h1>微电影管理系统</h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 权限管理</a></li>
+        <li class="active">添加权限</li>
+    </ol>
+</section>
+<section class="content" id="showcontent">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">添加权限</h3>
+                </div>
+                {% for msg in get_flashed_messages() %}
+                <p class="login-box-msg" style="color: red;">{{ msg }}</p>
+                {% endfor %}
+                <form role="form" method="post" novalidate>
+                    <div class="box-body">
+                        {% for err in form.name.errors %}
+                        <label style="color: red;">{{err}}</label>
+                        {% endfor %}
+                        <div class="form-group">
+                            <label for="input_name">{{form.name.label}}</label>
+                            {{form.name(value=auth.name)}}
+                        </div>
+                        {% for err in form.url.errors %}
+                        <label style="color: red;">{{err}}</label>
+                        {% endfor %}
+                        <div class="form-group">
+                            <label for="input_url">{{form.url.label}}</label>
+                            {{form.url(value=auth.url)}}
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        {{form.csrf_token}}
+                        {{form.submit}}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<!--内容-->
+{%endblock %}

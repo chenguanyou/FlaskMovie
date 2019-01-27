@@ -612,6 +612,24 @@ def authDelete(id=None):
     return redirect(url_for('admin.authList', page=1))
 
 
+# 权限编辑
+@admin.route("/authEdit/<int:id>", methods=["GET", "POST"])
+@admin_login_req
+def authEdit(id=None):
+    if id is not None:
+        form = AuthForm()
+        auth = Auth.query.get_or_404(id)
+        if form.validate_on_submit():
+            data = form.data
+            auth.name = data.get('name')
+            auth.url = data.get('url')
+            db.session.add(auth)
+            db.session.commit()
+            flash("添加编辑成功")
+            return redirect(url_for('admin.authEdit', id=id))
+        return render_template("admin/auth_edit.html", form=form, auth=auth)
+
+
 @admin.route("/roleAdd/")
 @admin_login_req
 def roleAdd():
