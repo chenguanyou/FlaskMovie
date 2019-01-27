@@ -17,11 +17,14 @@ from flask import url_for
 from flask import request
 from flask import flash  # 消息闪现
 from flask import session  # 登陆成功后建立会话
+
 from app.admin.forms import LoginForm  # 导入自定义的账号密码验证器
 from app.admin.forms import TagForm  # 导入标签验证表单
 from app.admin.forms import MovieForm  # 导入电影添加验证表单
 from app.admin.forms import PreViewForm  # 导入电影预告片的表单验证
 from app.admin.forms import PwdForm  # 导入修改密码的表单验证
+from app.admin.forms import AuthForm  # 添加权限管理的表单验证
+
 from app.models import Admin  # 导入管理员数据库模型
 from app.models import Tag  # 导入标签数据库模型
 from app.models import Movie  # 导入电影数据库模型
@@ -32,12 +35,11 @@ from app.models import MovieCol  # 导入电影收藏数据模型
 from app.models import OpLog  # 管理员操作日志
 from app.models import AdminLog  # 管理员登陆日志
 from app.models import UserLog  # 导入用户的登陆日志数据模型
+from app.models import Auth  # 添加权限数据库模型
+
 from app.admin.decorator import admin_login_req  # 导入访问权限装饰器
-
 from app.admin.updata import change_filename  # 更改长传的文件名
-
 from werkzeug.security import generate_password_hash  # 密码加密工具
-
 from app.admin.context import tpl_extra  # 导入全局上下文管理器
 
 
@@ -572,10 +574,22 @@ def userLoginLogList(page=None):
     return render_template("admin/userloginlog_list.html", page_data=page_data)
 
 
-@admin.route("/authAdd/")
+# 添加权限
+@admin.route("/authAdd/", methods=["GET", "POST"])
 @admin_login_req
 def authAdd():
-    return render_template("admin/auth_add.html")
+    form = AuthForm()
+    if form.validate_on_submit():
+        data = form.data
+        auth = Auth(
+            name=data.get('name'),
+            url=data.get('url')
+        )
+        db.session.add(auth)
+        db.session.commit()
+        flash("添加权限成功")
+        return redirect(url_for('admin.authAdd'))
+    return render_template("admin/auth_add.html", form=form)
 
 
 @admin.route("/authList/")
