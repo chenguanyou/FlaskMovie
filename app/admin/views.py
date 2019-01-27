@@ -40,6 +40,7 @@ from app.models import UserLog  # 导入用户的登陆日志数据模型
 from app.models import Auth  # 添加权限数据库模型
 from app.models import Role  # 导入角色数据库模型
 
+from app.admin.decorator import admin_auth  # 路由权限访问控制
 from app.admin.decorator import admin_login_req  # 导入访问权限装饰器
 from app.admin.updata import change_filename  # 更改长传的文件名
 from werkzeug.security import generate_password_hash  # 密码加密工具
@@ -109,6 +110,7 @@ def pwd():
 # 添加标签
 @admin.route("/tagadd/", methods=['GET', 'POST'])
 @admin_login_req
+@admin_auth
 def tagAdd():
     form = TagForm()
     if form.validate_on_submit():
@@ -139,6 +141,7 @@ def tagAdd():
 # 展示标签列表
 @admin.route('/taglist/<int:page>/', methods=['GET'])
 @admin_login_req
+@admin_auth
 def tagList(page=None):
     if page is None:
         page = 1
@@ -150,6 +153,7 @@ def tagList(page=None):
 # 标签的删除
 @admin.route('/tagdel/<int:id>/', methods=['GET'])
 @admin_login_req
+@admin_auth
 def tagDel(id=None):
     if id is not None:
         tag = Tag.query.filter_by(id=id).first_or_404()
@@ -169,6 +173,7 @@ def tagDel(id=None):
 # 标签的编辑
 @admin.route("/tagedit/<int:id>", methods=['GET', 'POST'])
 @admin_login_req
+@admin_auth
 def tagEdit(id=None):
     form = TagForm()
     tag = Tag.query.get_or_404(id)
@@ -197,7 +202,8 @@ def tagEdit(id=None):
 
 # 添加电影
 @admin.route("/movieAdd/", methods=["GET", "POST"])
-# @admin_login_req
+@admin_login_req
+@admin_auth
 def movieAdd():
     form = MovieForm()
     if form.validate_on_submit():
@@ -249,6 +255,7 @@ def movieAdd():
 # 电影列表
 @admin.route("/movieList/<int:page>", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def movieList(page=None):
     if page is None:
         page = 1
@@ -259,6 +266,7 @@ def movieList(page=None):
 # 电影删除
 @admin.route("/movieDelete/<int:id>", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def movieDelete(id=None):
     if id is not None:
         movie = Movie.query.filter_by(id=id).first_or_404()
@@ -282,6 +290,7 @@ def movieDelete(id=None):
 # 电影信息的编辑
 @admin.route("/movieEdit/<int:id>", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def movieEdit(id=None):
     if id is not None:
         form = MovieForm()
@@ -344,6 +353,7 @@ def movieEdit(id=None):
 # 添加预告片
 @admin.route("/previewAdd/", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def previewAdd():
     form = PreViewForm()
     if form.validate_on_submit():
@@ -379,6 +389,7 @@ def previewAdd():
 # 预告片列表
 @admin.route("/previewList/<int:page>", methods=["GET"])
 @admin_login_req
+@admin_auth
 def previewList(page=None):
     if page is None:
         page = 1
@@ -389,6 +400,7 @@ def previewList(page=None):
 # 预告片删除
 @admin.route("/previewDel/<int:id>", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def perViewDel(id=None):
     if id is not None:
         preview = PreView.query.filter_by(id=id).first_or_404()
@@ -412,6 +424,7 @@ def perViewDel(id=None):
 # 预告片的编辑
 @admin.route("/previewEdit/<int:id>", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def perViewEdit(id=None):
     if id is not None:
         form = PreViewForm()
@@ -454,6 +467,7 @@ def perViewEdit(id=None):
 # 会员列表
 @admin.route("/userList/<int:page>", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def userList(page=None):
     if page is None:
         page = 1
@@ -464,6 +478,7 @@ def userList(page=None):
 # 会员详情
 @admin.route("/userview/<int:id>", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def userView(id=None):
     if id is not None:
         user = User.query.get_or_404(id)
@@ -473,6 +488,7 @@ def userView(id=None):
 # 会员删除
 @admin.route("/userDelete/<int:id>", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def userDelete(id=None):
     if id is not None:
         user = User.query.get_or_404(id)
@@ -492,6 +508,7 @@ def userDelete(id=None):
 # 评论列表
 @admin.route("/commentList/<int:page>", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def commentList(page=None):
     if page is None:
         page = 1
@@ -502,6 +519,7 @@ def commentList(page=None):
 # 评论的删除
 @admin.route("/commentDelete/<int:id>", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def commentDelete(id=None):
     if id is not None:
         comment = Comment.query.get_or_404(id)
@@ -521,6 +539,7 @@ def commentDelete(id=None):
 # 电影的收藏列表
 @admin.route("/moviecolList/<int:page>", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def moviecolList(page=None):
     if page is None:
         page = 1
@@ -531,6 +550,7 @@ def moviecolList(page=None):
 # 电影收藏的删除
 @admin.route("/moviecolDelete/<int:id>", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def movieColDelete(id=None):
     if id is not None:
         moviecol = MovieCol.query.get_or_404(id)
@@ -550,6 +570,7 @@ def movieColDelete(id=None):
 # 操作日志列表
 @admin.route("/oplogList/<int:page>", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def oplogList(page=None):
     if page is None:
         page = 1
@@ -560,6 +581,7 @@ def oplogList(page=None):
 # 管理员登陆日志
 @admin.route("/adminLoginLogList/<int:page>", methods=["GET"])
 @admin_login_req
+@admin_auth
 def adminLoginLogList(page=None):
     if page is None:
         page = 1
@@ -570,6 +592,7 @@ def adminLoginLogList(page=None):
 # 用户登陆日志
 @admin.route("/userLoginLogList/<int:page>", methods=["GET"])
 @admin_login_req
+@admin_auth
 def userLoginLogList(page=None):
     if page is None:
         page = 1
@@ -580,6 +603,7 @@ def userLoginLogList(page=None):
 # 添加权限
 @admin.route("/authAdd/", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def authAdd():
     form = AuthForm()
     if form.validate_on_submit():
@@ -598,6 +622,7 @@ def authAdd():
 # 权限列表
 @admin.route("/authList/<int:page>", methods=["GET"])
 @admin_login_req
+@admin_auth
 def authList(page=1):
     page_data = Auth.query.order_by(Auth.addtime.desc()).paginate(page=page, per_page=5)  # 权限列表
     return render_template("admin/auth_list.html", page_data=page_data)
@@ -606,6 +631,7 @@ def authList(page=1):
 # 删除权限
 @admin.route("/authDelete/<int:id>", methods=["GET"])
 @admin_login_req
+@admin_auth
 def authDelete(id=None):
     if id is not None:
         auth = Auth.query.get_or_404(id)
@@ -618,6 +644,7 @@ def authDelete(id=None):
 # 权限编辑
 @admin.route("/authEdit/<int:id>", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def authEdit(id=None):
     if id is not None:
         form = AuthForm()
@@ -636,6 +663,7 @@ def authEdit(id=None):
 # 添加角色
 @admin.route("/roleAdd/", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def roleAdd():
     form = RoleForm()
     if form.validate_on_submit():
@@ -654,6 +682,7 @@ def roleAdd():
 # 角色列表
 @admin.route("/roleList/<int:page>", methods=["GET", ])
 @admin_login_req
+@admin_auth
 def roleList(page=1):
     page_data = Role.query.order_by(Role.addtime.desc()).paginate(page=page, per_page=10)  # 权限列表
     return render_template("admin/role_list.html", page_data=page_data)
@@ -662,6 +691,7 @@ def roleList(page=1):
 # 角色删除
 @admin.route("/roleDelete/<int:id>", methods=["GET"])
 @admin_login_req
+@admin_auth
 def roleDelete(id=None):
     if id is not None:
         role = Role.query.get_or_404(id)
@@ -674,6 +704,7 @@ def roleDelete(id=None):
 # 角色编辑
 @admin.route("/roleEdit/<int:id>", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def roleEdit(id=None):
     if id is not None:
         form = RoleForm()
@@ -696,6 +727,7 @@ def roleEdit(id=None):
 # 添加管理员
 @admin.route("/adminadd/", methods=["GET", "POST"])
 @admin_login_req
+@admin_auth
 def adminAdd():
     form = AdminForm()
     if form.validate_on_submit():
@@ -715,6 +747,7 @@ def adminAdd():
 # 管理员列表
 @admin.route("/adminlist/<int:page>", methods=["GET"])
 @admin_login_req
+@admin_auth
 def adminList(page=1):
     page_data = Admin.query.order_by(Admin.addtime.desc()).paginate(page=page, per_page=10)  # 权限列表
     return render_template("admin/admin_list.html", page_data=page_data)

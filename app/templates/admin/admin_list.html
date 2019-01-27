@@ -33,6 +33,7 @@
                         <tr>
                             <th>编号</th>
                             <th>管理员名称</th>
+                            <th>管理员类型</th>
                             <th>管理员角色</th>
                             <th>添加时间</th>
                         </tr>
@@ -40,6 +41,13 @@
                         <tr>
                             <td>{{v.id}}</td>
                             <td>{{v.name}}</td>
+                            <td>
+                                {% if v.is_super==0 %}
+                                超级管理员
+                                {% else %}
+                                普通管理员
+                                {% endif %}
+                            </td>
                             <td>{{v.role.name}}</td>
                             <td>{{v.addtime}}</td>
                         </tr>
