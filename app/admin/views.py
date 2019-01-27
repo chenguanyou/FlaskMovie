@@ -592,11 +592,24 @@ def authAdd():
     return render_template("admin/auth_add.html", form=form)
 
 
+# 权限列表
 @admin.route("/authList/<int:page>", methods=["GET"])
 @admin_login_req
 def authList(page=1):
     page_data = Auth.query.order_by(Auth.addtime.desc()).paginate(page=page, per_page=5)  # 权限列表
     return render_template("admin/auth_list.html", page_data=page_data)
+
+
+# 删除权限
+@admin.route("/authDelete/<int:id>", methods=["GET"])
+@admin_login_req
+def authDelete(id=None):
+    if id is not None:
+        auth = Auth.query.get_or_404(id)
+        db.session.delete(auth)
+        db.session.commit()
+        flash("权限删除成功")
+    return redirect(url_for('admin.authList', page=1))
 
 
 @admin.route("/roleAdd/")
