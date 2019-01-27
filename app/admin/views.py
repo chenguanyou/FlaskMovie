@@ -703,7 +703,7 @@ def adminAdd():
         admin = Admin(
             name=data.get('name'),
             pwd=generate_password_hash(data.get('pwd')),
-            is_super=0,
+            is_super=1,
             role_id=data.get('role_id')
         )
         db.session.add(admin)
@@ -713,7 +713,8 @@ def adminAdd():
 
 
 # 管理员列表
-@admin.route("/adminlist")
+@admin.route("/adminlist/<int:page>", methods=["GET"])
 @admin_login_req
-def adminList():
-    return render_template("admin/admin_list.html")
+def adminList(page=1):
+    page_data = Admin.query.order_by(Admin.addtime.desc()).paginate(page=page, per_page=10)  # 权限列表
+    return render_template("admin/admin_list.html", page_data=page_data)
