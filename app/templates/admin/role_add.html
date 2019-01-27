@@ -15,25 +15,33 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">添加角色</h3>
                 </div>
-                <form role="form">
+                {% for msg in get_flashed_messages() %}
+                <p class="login-box-msg" style="color: red;">{{ msg }}</p>
+                {% endfor %}
+                <form role="form" method="post" novalidate>
                     <div class="box-body">
                         <div class="form-group">
+                            {% for err in form.name.errors %}
+                            <label style="color: red;">{{err}}</label>
+                            {% endfor %}
                             <label for="input_name">角色名称</label>
-                            <input type="text" class="form-control" id="input_name" placeholder="请输入角色名称！">
+                            {{form.name}}
                         </div>
                         <div class="form-group" id="auth_list">
+                            {% for err in form.auths.errors %}
+                            <label style="color: red;">{{err}}</label>
+                            {% endfor %}
                             <div class="col-md-12">
                                 <label>操作权限</label>
                             </div>
                             <div class="col-md-2">
-                                <label>
-                                    <input type="checkbox" name="input_url"> 添加标签
-                                </label>
+                                {{form.auths}}
                             </div>
                         </div>
                     </div>
                     <div class="box-footer">
-                        <button type="submit" class="btn btn-primary">添加</button>
+                        {{form.csrf_token}}
+                        {{form.submit}}
                     </div>
                 </form>
             </div>

@@ -15,12 +15,16 @@ from wtforms import FileField  # 验证URL
 from wtforms import TextAreaField  # 验证文本框
 from wtforms import SelectField  # 用来验证下拉选择框
 from wtforms import SubmitField  # 提交表单
+from wtforms import SelectMultipleField  # 多选验证
 from wtforms.validators import DataRequired  # 导入验证器
 from wtforms.validators import ValidationError  # 验证信息错误，通过他来进行抛出
 from app.models import Admin  # 管理员数据模型
 from app.models import Tag  # 导入电影标签
+from app.models import Auth  # 导入权限列表
 
 tags = Tag.query.all()
+
+auth_list = Auth.query.all()
 
 
 # 管理员登陆表单验证
@@ -334,6 +338,43 @@ class AuthForm(FlaskForm):
             "class": "form-control",
             "id": "input_url",
             "placeholder": "请输入权限地址!"
+        }
+    )
+
+    submit = SubmitField(
+        label="编辑",
+        render_kw={
+            "class": "btn btn-primary"
+        }
+    )
+
+
+# 权限角色的表单验证
+class RoleForm(FlaskForm):
+    name = StringField(
+        label="角色名称",
+        validators=[
+            DataRequired("请输入角色名称！")
+        ],
+        description="角色名称",
+        render_kw={
+            "class": "form-control",
+            "id": "input_name",
+            "placeholder": "请输入角色名称!"
+        }
+    )
+
+    auths = SelectMultipleField(
+        label="操作权限",
+        validators=[
+            DataRequired("请选择操作权限！")
+        ],
+        coerce=int,
+        choices=[(v.id, v.name) for v in auth_list],
+        description="操作权限",
+        render_kw={
+            "type": "checkbox",
+            "placeholder": "操作权限!"
         }
     )
 

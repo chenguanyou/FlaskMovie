@@ -24,6 +24,7 @@ from app.admin.forms import MovieForm  # 导入电影添加验证表单
 from app.admin.forms import PreViewForm  # 导入电影预告片的表单验证
 from app.admin.forms import PwdForm  # 导入修改密码的表单验证
 from app.admin.forms import AuthForm  # 添加权限管理的表单验证
+from app.admin.forms import RoleForm  # 添加角色的表单验证
 
 from app.models import Admin  # 导入管理员数据库模型
 from app.models import Tag  # 导入标签数据库模型
@@ -36,6 +37,7 @@ from app.models import OpLog  # 管理员操作日志
 from app.models import AdminLog  # 管理员登陆日志
 from app.models import UserLog  # 导入用户的登陆日志数据模型
 from app.models import Auth  # 添加权限数据库模型
+from app.models import Role  # 导入角色数据库模型
 
 from app.admin.decorator import admin_login_req  # 导入访问权限装饰器
 from app.admin.updata import change_filename  # 更改长传的文件名
@@ -630,10 +632,22 @@ def authEdit(id=None):
         return render_template("admin/auth_edit.html", form=form, auth=auth)
 
 
-@admin.route("/roleAdd/")
+# 添加角色
+@admin.route("/roleAdd/", methods=["GET", "POST"])
 @admin_login_req
 def roleAdd():
-    return render_template("admin/role_add.html")
+    form = RoleForm()
+    if form.validate_on_submit():
+        data = form.data
+        # 使用map(lambda v: str(v), data.get('auths') 把数组的数据转换为字符串
+        role = Role(
+            name=data.get('name'),
+            auths=",".join(map(lambda v: str(v), data.get('auths')))
+        )
+        db.session.add(role)
+        db.session.commit()
+        flash("角色添加成功！")
+    return render_template("admin/role_add.html", form=form)
 
 
 @admin.route("/roleList/")
