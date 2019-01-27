@@ -384,3 +384,94 @@ class RoleForm(FlaskForm):
             "class": "btn btn-primary"
         }
     )
+
+
+# 添加管理员表单验证
+class AdminForm(FlaskForm):
+    name = StringField(
+        # 标签
+        label='管理员名称',
+        # 验证器
+        validators=[
+            DataRequired("请输入管理员名称")
+        ],
+        # 描述
+        description="管理员名称",
+        # 附加的选项
+        render_kw={
+            "class": "form-control",
+            "id": "input_name",
+            "placeholder": "请输入管理员名称!"
+        }
+    )
+
+    pwd = PasswordField(
+        # 标签
+        label='密码',
+        # 验证器
+        validators=[
+            DataRequired("请输入密码")
+        ],
+        # 描述
+        description="密码",
+        # 附加选项
+        render_kw={
+            "class": "form-control",
+            "placeholder": "请输入密码！",
+            "id": "input_pwd",
+            "required": "required",
+        }
+    )
+
+    re_pwd = PasswordField(
+        # 标签
+        label='重复密码',
+        # 验证器
+        validators=[
+            DataRequired("请输入管理员重复密码")
+        ],
+        # 描述
+        description="重复密码",
+        # 附加选项
+        render_kw={
+            "class": "form-control",
+            "id": "input_re_pwd",
+            "placeholder": "请输入管理员重复密码！",
+            "required": "required",
+        }
+    )
+
+    role_id = SelectField(
+        label="所属角色",
+        validators=[
+            DataRequired("请选择角色"),
+        ],
+        coerce=int,
+        choices=[(v.id, v.name) for v in auth_list],
+        description="所属角色",
+        render_kw={
+            "class": "form-control",
+            "id": "input_role_id"
+        }
+    )
+
+    submit = SubmitField(
+        # 标签
+        label='编辑',
+        # 附加选项
+        render_kw={
+            "class": "btn btn-primary",
+        }
+    )
+
+    # 验证账号
+    def validate_name(self, field):
+        name = field.data
+        admin = Admin.query.filter_by(name=name).count()
+        if admin != 0:
+            raise ValidationError("账号已经存在")
+
+    # 验证密码
+    def validate_pwd(self, field):
+        if self.re_pwd.data != self.pwd.data:
+            raise ValidationError("密码不一致")

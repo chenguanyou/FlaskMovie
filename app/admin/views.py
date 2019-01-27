@@ -25,6 +25,7 @@ from app.admin.forms import PreViewForm  # 导入电影预告片的表单验证
 from app.admin.forms import PwdForm  # 导入修改密码的表单验证
 from app.admin.forms import AuthForm  # 添加权限管理的表单验证
 from app.admin.forms import RoleForm  # 添加角色的表单验证
+from app.admin.forms import AdminForm  # 添加管理员的表单验证
 
 from app.models import Admin  # 导入管理员数据库模型
 from app.models import Tag  # 导入标签数据库模型
@@ -692,12 +693,26 @@ def roleEdit(id=None):
         return render_template("admin/role_edit.html", form=form, role=role)
 
 
-@admin.route("/adminadd/")
+# 添加管理员
+@admin.route("/adminadd/", methods=["GET", "POST"])
 @admin_login_req
 def adminAdd():
-    return render_template("admin/admin_add.html")
+    form = AdminForm()
+    if form.validate_on_submit():
+        data = form.data
+        admin = Admin(
+            name=data.get('name'),
+            pwd=generate_password_hash(data.get('pwd')),
+            is_super=0,
+            role_id=data.get('role_id')
+        )
+        db.session.add(admin)
+        db.session.commit()
+        flash("管理员添加成功")
+    return render_template("admin/admin_add.html", form=form)
 
 
+# 管理员列表
 @admin.route("/adminlist")
 @admin_login_req
 def adminList():
