@@ -670,6 +670,25 @@ def roleDelete(id=None):
         return redirect(url_for('admin.roleList', page=1))
 
 
+# 角色编辑
+@admin.route("/roleEdit/<int:id>", methods=["GET", "POST"])
+@admin_login_req
+def roleEdit(id=None):
+    if id is not None:
+        form = RoleForm()
+        role = Role.query.get_or_404(id)
+        if form.validate_on_submit():
+            data = form.data
+            # 使用map(lambda v: str(v), data.get('auths') 把数组的数据转换为字符串
+            role.name = data.get('name')
+            role.auths = ",".join(map(lambda v: str(v), data.get('auths')))
+            db.session.add(role)
+            db.session.commit()
+            flash("角色编辑成功！")
+            return redirect(url_for('admin.roleEdit', id=id))
+        return render_template("admin/role_edit.html", form=form, role=role)
+
+
 @admin.route("/adminadd/")
 @admin_login_req
 def adminAdd():
