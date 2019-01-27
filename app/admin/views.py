@@ -677,6 +677,9 @@ def roleEdit(id=None):
     if id is not None:
         form = RoleForm()
         role = Role.query.get_or_404(id)
+        if request.method == "GET":
+            form.auths.data = list(map(lambda v: int(v), role.auths.split(',')))
+
         if form.validate_on_submit():
             data = form.data
             # 使用map(lambda v: str(v), data.get('auths') 把数组的数据转换为字符串
