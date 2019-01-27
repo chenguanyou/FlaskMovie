@@ -658,6 +658,18 @@ def roleList(page=1):
     return render_template("admin/role_list.html", page_data=page_data)
 
 
+# 角色删除
+@admin.route("/roleDelete/<int:id>", methods=["GET"])
+@admin_login_req
+def roleDelete(id=None):
+    if id is not None:
+        role = Role.query.get_or_404(id)
+        db.session.delete(role)
+        db.session.commit()
+        flash("角色删除成功")
+        return redirect(url_for('admin.roleList', page=1))
+
+
 @admin.route("/adminadd/")
 @admin_login_req
 def adminAdd():
