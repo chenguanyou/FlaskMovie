@@ -650,10 +650,12 @@ def roleAdd():
     return render_template("admin/role_add.html", form=form)
 
 
-@admin.route("/roleList/")
+# 角色列表
+@admin.route("/roleList/<int:page>", methods=["GET", ])
 @admin_login_req
-def roleList():
-    return render_template("admin/role_list.html")
+def roleList(page=1):
+    page_data = Role.query.order_by(Role.addtime.desc()).paginate(page=page, per_page=10)  # 权限列表
+    return render_template("admin/role_list.html", page_data=page_data)
 
 
 @admin.route("/adminadd/")
