@@ -8,6 +8,7 @@
 # @NetName : 書劍
 # @Software: TheMovie
 import re
+from flask import session
 from flask_wtf import FlaskForm
 
 from wtforms import StringField
@@ -20,6 +21,8 @@ from wtforms.validators import DataRequired
 from wtforms.validators import ValidationError
 
 from app.models import User
+
+from werkzeug.security import generate_password_hash  # 导入加密工具
 
 
 # 会员注册表单验证
@@ -286,3 +289,47 @@ class UserForm(FlaskForm):
             return True
         if user.count() != 0:
             raise ValidationError("手机号已经存在")
+
+
+# 验证会员中心的密码修改
+class PwdForm(FlaskForm):
+    oldpwd = PasswordField(
+        label="旧密码",
+        validators=[
+            DataRequired("请输入旧密码！")
+        ],
+        description="旧密码",
+        render_kw={
+            "id": "input_oldpwd",
+            "class": "form-control",
+            "placeholder": "旧密码"
+        }
+    )
+
+    newpwd = PasswordField(
+        label="新密码",
+        validators=[
+            DataRequired("请输入新密码！")
+        ],
+        description="新密码",
+        render_kw={
+            "id": "input_newpwd",
+            "class": "form-control",
+            "placeholder": "新密码"
+        }
+    )
+
+    submit = SubmitField(
+        label="修改密码",
+        render_kw={
+            "class": "btn btn-success"
+        }
+    )
+
+    # 验证旧密码是否正确
+    def validate_oldpwd(self, field):
+        oldpwd = field.data
+        name = session.get("user")
+        user = User.query.filter_by(email=name).first()
+        if not user.check_pwd(oldpwd):
+            raise ValidationError("旧密码错误")

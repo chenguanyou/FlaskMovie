@@ -98,7 +98,6 @@ def pwd():
         data = form.data
         name = session.get("admin")
         admin = Admin.query.filter_by(name=name).first()
-        print(admin)
         admin.pwd = generate_password_hash(data.get('new_pwd'))
         db.session.add(admin)
         db.session.commit()

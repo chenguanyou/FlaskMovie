@@ -25,6 +25,7 @@ from app.models import UserLog
 from app.home.forms import RegisterForm  # 导入注册表单验证
 from app.home.forms import LoginForm  # 登陆表单验证
 from app.home.forms import UserForm  # 导入会员中心的表单验证
+from app.home.forms import PwdForm  # 修改密码表单验证
 
 from werkzeug.security import generate_password_hash  # 导入加密工具
 from app.home.decorator import user_login_req  # 登陆验证装饰器
@@ -132,10 +133,20 @@ def user():
     return render_template("home/user.html", form=form, user=user)
 
 
-@home.route("/pwd/")
+# 修改密码
+@home.route("/pwd/", methods=["GET", "POST"])
 @user_login_req
 def pwd():
-    return render_template("home/pwd.html")
+    form = PwdForm()
+    if form.validate_on_submit():
+        data = form.data
+        user = User.query.filter_by(email=session.get('user')).first()
+        user.pwd = generate_password_hash(data.get('newpwd'))
+        db.session.add(user)
+        db.session.commit()
+        flash("密码修改成功, 请重新登录!")
+        return redirect(url_for('home.logout'))
+    return render_template("home/pwd.html", form=form)
 
 
 @home.route("/comments/")

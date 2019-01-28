@@ -7,6 +7,9 @@
                 <h3 class="panel-title"><span class="glyphicon glyphicon-log-in"></span>&nbsp;会员登录</h3>
             </div>
             <div class="panel-body">
+                {% for msg in get_flashed_messages() %}
+                <p class="login-box-msg" style="color: red;">{{ msg }}</p>
+                {% endfor %}
                 <form role="form" method="post" novalidate>
                     <fieldset>
                         <div class="form-group">
