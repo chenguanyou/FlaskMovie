@@ -7,6 +7,7 @@
 # @MyBlog  : WWW.SHUJIAN.ORG
 # @NetName : 書劍
 # @Software: TheMovie
+
 from app.home import home
 from flask import render_template  # 导入页面渲染函数
 from flask import redirect  # 退出
@@ -15,6 +16,7 @@ from flask import request
 from flask import session
 from flask import url_for  # url生成器
 
+import os
 from app import db
 from app import app
 from app.models import User
@@ -22,9 +24,11 @@ from app.models import UserLog
 
 from app.home.forms import RegisterForm  # 导入注册表单验证
 from app.home.forms import LoginForm  # 登陆表单验证
+from app.home.forms import UserForm  # 导入会员中心的表单验证
 
 from werkzeug.security import generate_password_hash  # 导入加密工具
 from app.home.decorator import user_login_req  # 登陆验证装饰器
+from app.admin.updata import change_filename  # 导入修改上传头像的名称
 
 
 @home.route("/")
@@ -97,10 +101,35 @@ def register():
     return render_template("home/register.html", form=form)
 
 
-@home.route("/user/")
+@home.route("/user/", methods=["GET", "POST"])
 @user_login_req
 def user():
-    return render_template("home/user.html")
+    form = UserForm()
+    user = User.query.get_or_404(session["user_id"])
+    if request.method == "GET":
+        form.info.data = user.info
+    if form.validate_on_submit():
+        data = form.data
+        # 获取到头像文件
+        face_name = form.face.data.filename
+        # 判断文件夹是否存在，如果不存在就创建
+        if not os.path.exists(app.config['UP_DIR'] + "/user/"):
+            os.mkdir(app.config["UP_DIR"] + "/user/")
+        # 对头像文件进行重命名
+        face = change_filename(face_name)
+        # 保存头像到本地文件
+        form.face.data.save(app.config["UP_DIR"] + "/user/" + face)
+        # 进行修改入库操作
+        user.name = data.get('name')
+        user.email = data.get('email')
+        user.phone = data.get('phone')
+        user.face = face
+        user.info = data.get('info')
+        db.session.add(user)
+        db.session.commit()
+        flash("资料修改成功")
+        return redirect(url_for('home.user'))
+    return render_template("home/user.html", form=form, user=user)
 
 
 @home.route("/pwd/")
@@ -128,6 +157,5 @@ def moviecol():
 
 
 @home.route("/animation/")
-@user_login_req
 def animation():
     return render_template("home/animation.html")
