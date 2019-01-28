@@ -103,6 +103,7 @@ def register():
     return render_template("home/register.html", form=form)
 
 
+# 会员中心
 @home.route("/user/", methods=["GET", "POST"])
 @user_login_req
 def user():
@@ -158,10 +159,12 @@ def comments(page=1):
     return render_template("home/comments.html", data_page=data_page)
 
 
-@home.route("/loginlog/")
+# 登陆日志
+@home.route("/loginlog/", methods=["GET"])
 @user_login_req
 def loginlog():
-    return render_template("home/loginlog.html")
+    data_page = UserLog.query.filter_by(user_id=session.get('user_id')).order_by(UserLog.add_time.desc())[:10]  # .paginate(page=page, per_page=1)
+    return render_template("home/loginlog.html", data_page=data_page)
 
 
 @home.route("/moviecol/")
