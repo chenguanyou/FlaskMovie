@@ -261,9 +261,9 @@ class UserForm(FlaskForm):
     def validate_name(self, field):
         name = field.data
         user = User.query.filter_by(name=name)
-        if str(user.first().name) == str(self.name.data):
-            return True
         if user.count() != 0:
+            if str(user.first().name) == str(self.name.data):
+                return True
             raise ValidationError("昵称已经被使用！")
 
     # 验证邮箱格式是否正确，是否存在
