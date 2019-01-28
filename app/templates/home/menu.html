@@ -6,7 +6,7 @@
         <a href="{{ url_for('home.pwd') }}" class="list-group-item" id="m-2">
             <span class="glyphicon glyphicon-lock"></span>&nbsp;修改密码
         </a>
-        <a href="{{ url_for('home.comments') }}" class="list-group-item" id="m-3">
+        <a href="{{ url_for('home.comments', page=1) }}" class="list-group-item" id="m-3">
             <span class="glyphicon glyphicon-comment"></span>&nbsp;评论记录
         </a>
         <a href="{{ url_for('home.loginlog') }}" class="list-group-item" id="m-4">

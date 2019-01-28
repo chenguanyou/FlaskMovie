@@ -21,6 +21,7 @@ from app import db
 from app import app
 from app.models import User
 from app.models import UserLog
+from app.models import Comment
 
 from app.home.forms import RegisterForm  # 导入注册表单验证
 from app.home.forms import LoginForm  # 登陆表单验证
@@ -149,10 +150,12 @@ def pwd():
     return render_template("home/pwd.html", form=form)
 
 
-@home.route("/comments/")
+# 评论列表
+@home.route("/comments/<int:page>", methods=["GET"])
 @user_login_req
-def comments():
-    return render_template("home/comments.html")
+def comments(page=1):
+    data_page = Comment.query.order_by(Comment.addtime.desc()).paginate(page=page, per_page=1)
+    return render_template("home/comments.html", data_page=data_page)
 
 
 @home.route("/loginlog/")
