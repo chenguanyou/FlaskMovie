@@ -1,4 +1,5 @@
 {% extends "home/home.html" %}
+{% import 'ui/user_page.html' as pages %}
 {% block css %}
 <style>
     .navbar-brand > img {
@@ -25,47 +26,26 @@
         </div>
         <div class="panel-body">
             <div class="col-md-12">
-                {% for i in range(1, 10) %}
+                {% for i in data_page.items %}
                 <div class="media">
                     <div class="media-left">
                         <a href="{{ url_for('home.play') }}">
-                            <img class="media-object" src="holder.js/131x83" alt="环太平洋">
+                            <img class="media-object" width="90px" height="90px" src="{{url_for('static',filename='uploads/'+i.movie.logo)}}"
+                                 alt="环太平洋">
                         </a>
                     </div>
                     <div class="media-body">
-                        <h4 class="media-heading">环太平洋<a href="{{ url_for('home.play') }}"
-                                                         class="label label-primary pull-right"><span
+                        <h4 class="media-heading">{{i.movie.title}}<a href="{{ url_for('home.play') }}"
+                                                                      class="label label-primary pull-right"><span
                                 class="glyphicon glyphicon-play"></span>播放影片</a></h4>
-                        该片主要讲述了人类为了抵抗怪兽的进攻，研制出了高大的机器战士与来犯怪兽进行对抗的故事。
+                        {{i.movie.info}}
                     </div>
                 </div>
                 {% endfor %}
             </div>
             <div class="col-md-12 text-center" style="margin-top:6px;">
                 <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <li>
-                            <a href="#" aria-label="First">
-                                <span aria-hidden="true">首页</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" aria-label="Previous">
-                                <span aria-hidden="true">上一页</span>
-                            </a>
-                        </li>
-                        <li><a href="#">1&nbsp;/&nbsp;10</a></li>
-                        <li>
-                            <a href="#" aria-label="Next">
-                                <span aria-hidden="true">下一页</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" aria-label="Last">
-                                <span aria-hidden="true">尾页</span>
-                            </a>
-                        </li>
-                    </ul>
+                    {{pages.page(data_page, 'home.moviecol')}}
                 </nav>
             </div>
         </div>

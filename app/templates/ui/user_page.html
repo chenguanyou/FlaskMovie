@@ -15,15 +15,11 @@
     {% else %}
     <li><a class="disabled">上一页</a></li>
     {% endif %}
-
     {% for pag in data.iter_pages() %}
     {% if pag == data.page %}
-    <li><a href="#">{{ pag }}&nbsp;/&nbsp;{{data.total}}</a></li>
-    {% else %}
-    <!--<li><a href="#">{{ pag }} /&nbsp;{{data.total}}</a></li>-->
+    <li><a href="#">{{ pag }}</a></li>
     {% endif %}
     {% endfor %}
-
 
     {% if data.has_next %}
     <li>

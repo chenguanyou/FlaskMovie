@@ -22,6 +22,7 @@ from app import app
 from app.models import User
 from app.models import UserLog
 from app.models import Comment
+from app.models import MovieCol
 
 from app.home.forms import RegisterForm  # 导入注册表单验证
 from app.home.forms import LoginForm  # 登陆表单验证
@@ -155,7 +156,8 @@ def pwd():
 @home.route("/comments/<int:page>", methods=["GET"])
 @user_login_req
 def comments(page=1):
-    data_page = Comment.query.order_by(Comment.addtime.desc()).paginate(page=page, per_page=1)
+    data_page = Comment.query.filter_by(user_id=session.get('user_id')).order_by(Comment.addtime.desc()).paginate(
+        page=page, per_page=10)
     return render_template("home/comments.html", data_page=data_page)
 
 
@@ -163,14 +165,17 @@ def comments(page=1):
 @home.route("/loginlog/", methods=["GET"])
 @user_login_req
 def loginlog():
-    data_page = UserLog.query.filter_by(user_id=session.get('user_id')).order_by(UserLog.add_time.desc())[:10]  # .paginate(page=page, per_page=1)
+    data_page = UserLog.query.filter_by(user_id=session.get('user_id')).order_by(UserLog.add_time.desc())[:10]
     return render_template("home/loginlog.html", data_page=data_page)
 
 
-@home.route("/moviecol/")
+# 获取用户收藏的电影
+@home.route("/moviecol/<int:page>", methods=["GET"])
 @user_login_req
-def moviecol():
-    return render_template("home/moviecol.html")
+def moviecol(page=1):
+    data_page = MovieCol.query.filter_by(user_id=session.get('user_id')).order_by(MovieCol.addtime.desc()).paginate(
+        page=page, per_page=1)
+    return render_template("home/moviecol.html", data_page=data_page)
 
 
 @home.route("/animation/")
