@@ -139,6 +139,9 @@
                     </div>
                     {{form.csrf_token}}
                     {{form.submit}}
+                    {% for msg in get_flashed_messages() %}
+                    <p class="login-box-msg" style="color: red;">{{ msg }}</p>
+                    {% endfor %}
                     <a class="btn btn-danger" id="btn-col"><span class="glyphicon glyphicon-heart"></span>&nbsp;收藏电影</a>
                 </form>
                 {% endif %}
@@ -196,6 +199,10 @@
         initialFrameWidth: "100%",
         initialFrameHeight: "100",
     });
+    $("#btn-col").click(function () {
+        var id = "{{play_movie.id}}"
+        location.href = "{{ url_for('home.playcol') }}?id=" + id;
+    })
 </script>
 <script type="text/javascript">
     jwplayer.key = "P9VTqT/X6TSP4gi/hy1wy23BivBhjdzVjMeOaQ==";

@@ -110,6 +110,30 @@ def play(id=None):
     return render_template("home/play.html", play_movie=play_movie, commit=commit, form=form)
 
 
+# 电影的收藏
+@home.route("/playcol/", methods=["GET"])
+@user_login_req
+def playcol():
+    id = request.args.get('id', None)
+    if id is not None:
+        # 查询电影是否已经收藏，如果已经收藏就取消收藏，如果没有收藏就加入收藏
+        moviecol = MovieCol.query.filter_by(id=id).first()
+        print(moviecol)
+        if moviecol is None:
+            moviecol = MovieCol(
+                movie_id=id,
+                user_id=session["user_id"]
+            )
+            db.session.add(moviecol)
+            db.session.commit()
+            flash("收藏成功")
+        else:
+            db.session.delete(moviecol)
+            db.session.commit()
+            flash("取消收藏成功")
+    return redirect(url_for('home.play', id=id))
+
+
 # 电影搜索
 @home.route("/search/<int:page>", methods=["GET"])
 def search(page=1):
