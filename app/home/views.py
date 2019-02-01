@@ -23,6 +23,7 @@ from app.models import User
 from app.models import UserLog
 from app.models import Comment
 from app.models import MovieCol
+from app.models import PreView
 
 from app.home.forms import RegisterForm  # 导入注册表单验证
 from app.home.forms import LoginForm  # 登陆表单验证
@@ -180,4 +181,5 @@ def moviecol(page=1):
 
 @home.route("/animation/")
 def animation():
-    return render_template("home/animation.html")
+    preview_data = PreView.query.all()
+    return render_template("home/animation.html", data=preview_data)
