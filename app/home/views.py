@@ -37,14 +37,15 @@ from app.home.decorator import user_login_req  # 登陆验证装饰器
 from app.admin.updata import change_filename  # 导入修改上传头像的名称
 
 
-@home.route("/", methods=["GET"])
-def index():
+@home.route("/<int:page>", methods=["GET"])
+def index(page=1):
     tid = request.args.get("tid", 0)  # 标签
     star = request.args.get("star", 0)  # 星级
     time = request.args.get("time", 0)  # 上映时间
     pm = request.args.get("pm", 0)  # 播放数量
     cm = request.args.get("cm", 0)  # 评论数量
     tages = Tag.query.all()  # 获取所有的标签
+    movie = Movie.query
     p = dict(
         tid=tid,
         star=star,
@@ -52,9 +53,30 @@ def index():
         pm=pm,
         cm=cm
     )
-    # movie = Movie.query.filter_by(user_id=session.get('user_id')).order_by(Comment.addtime.desc()).paginate(
-    #     page=page, per_page=10)
-    return render_template("home/index.html", tages=tages, p=p)
+    datanum = {k: int(v) for k, v in p.items() if int(v) > 0}
+    if datanum.get('tid'):
+        movie = movie.filter_by(tag_id=datanum.get('tid'))
+    if datanum.get('star'):
+        movie = movie.filter_by(star=datanum.get('star'))
+    if datanum.get('time'):
+        if datanum.get('time') == 1:
+            movie = movie.order_by(Movie.addtime.desc())
+        if datanum.get('time') == 2:
+            movie = movie.order_by(Movie.addtime.asc())
+
+    if datanum.get('pm'):
+        if datanum.get('pm') == 1:
+            movie = movie.order_by(Movie.playnum.desc())
+        if datanum.get('pm') == 2:
+            movie = movie.order_by(Movie.playnum.asc())
+
+    if datanum.get('cm'):
+        if datanum.get('cm') == 1:
+            movie = movie.order_by(Movie.commentnum.desc())
+        if datanum.get('cm') == 2:
+            movie = movie.order_by(Movie.commentnum.asc())
+    page_data = movie.paginate(page=int(page), per_page=10)
+    return render_template("home/index.html", tages=tages, p=p, page_data=page_data)
 
 
 @home.route("/play/")
