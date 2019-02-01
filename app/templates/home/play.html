@@ -128,16 +128,17 @@
                     <li>全部评论(5)</li>
                 </ol>
                 {% if session['user_id'] %}
-                <form role="form" style="margin-bottom:6px;">
+                <form action="{{url_for('home.play', id=play_movie.id)}}" role="form" style="margin-bottom:6px;"
+                      method="post" novalidate>
                     <div class="form-group">
                         <div>
                             <label for="input_content">内容</label>
-                            <textarea id="input_content"></textarea>
+                            {{form.content}}
                         </div>
                         <div class="col-xs-12" id="error_content"></div>
                     </div>
-                    <a class="btn btn-success" id="btn-sub"><span class="glyphicon glyphicon-edit"></span>&nbsp;提交评论</a>
-                    &nbsp;
+                    {{form.csrf_token}}
+                    {{form.submit}}
                     <a class="btn btn-danger" id="btn-col"><span class="glyphicon glyphicon-heart"></span>&nbsp;收藏电影</a>
                 </form>
                 {% endif %}
@@ -146,7 +147,9 @@
                     <li class="item cl">
                         <a>
                             <i class="avatar size-L radius">
-                                <img alt="50x50" width="50px" height="50px" src="{{url_for('static', filename='uploads/user/'+v.user.face)}}" class="img-circle"
+                                <img alt="50x50" width="50px" height="50px"
+                                     src="{{url_for('static', filename='uploads/user/'+v.user.face)}}"
+                                     class="img-circle"
                                      style="border:1px solid #abcdef;">
                             </i>
                         </a>
@@ -160,7 +163,7 @@
                                 </div>
                             </header>
                             <div class="comment-body">
-                                <p>{{v.content}}</p>
+                                <p>{{v.content |safe }}</p>
                             </div>
                         </div>
                     </li>

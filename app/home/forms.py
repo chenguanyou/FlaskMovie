@@ -333,3 +333,24 @@ class PwdForm(FlaskForm):
         user = User.query.filter_by(email=name).first()
         if not user.check_pwd(oldpwd):
             raise ValidationError("旧密码错误")
+
+
+# 评论的表单
+class CommentForms(FlaskForm):
+    content = TextAreaField(
+        label='评论',
+        validators=[
+            DataRequired("请输入评论")
+        ],
+        description="评论",
+        render_kw={
+            "id": "input_content"
+        }
+    )
+
+    submit = SubmitField(
+        label="提交评论",
+        render_kw={
+            "class": "btn btn-success"
+        }
+    )

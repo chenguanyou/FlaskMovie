@@ -31,6 +31,7 @@ from app.home.forms import RegisterForm  # 导入注册表单验证
 from app.home.forms import LoginForm  # 登陆表单验证
 from app.home.forms import UserForm  # 导入会员中心的表单验证
 from app.home.forms import PwdForm  # 修改密码表单验证
+from app.home.forms import CommentForms  # 评论验证表单
 
 from werkzeug.security import generate_password_hash  # 导入加密工具
 from app.home.decorator import user_login_req  # 登陆验证装饰器
@@ -80,9 +81,11 @@ def index(page=1):
 
 
 # 电影播放
-@home.route("/play/<int:id>", methods=["GET", ])
+@home.route("/play/<int:id>", methods=["GET", "POST"])
+@user_login_req
 def play(id=None):
     if id is not None:
+        form = CommentForms()
         play_movie = Movie.query.filter_by(id=int(id)).first()
         if play_movie is None:
             return redirect(url_for('home.index', page=1))
@@ -91,8 +94,20 @@ def play(id=None):
         db.session.add(play_movie)
         db.session.commit()
         # 获取当前电影的评论-==
-        commit = Comment.query.filter_by(movie_id=id)
-    return render_template("home/play.html", play_movie=play_movie, commit=commit)
+        commit = Comment.query.filter_by(movie_id=id).order_by(Comment.addtime.desc())
+        # 添加评论
+        if request.method == "POST":
+            if form.validate_on_submit():
+                data = form.data
+                comment = Comment(
+                    content=data.get('content'),
+                    movie_id=id,
+                    user_id=session['user_id']
+                )
+                db.session.add(comment)
+                db.session.commit()
+                return redirect(url_for('home.play', id=id))
+    return render_template("home/play.html", play_movie=play_movie, commit=commit, form=form)
 
 
 # 电影搜索
