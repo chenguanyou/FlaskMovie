@@ -32,7 +32,7 @@
                         <a href="{{ url_for('home.play', id=i.id) }}">
                             <img class="media-object" width="90px" height="90px"
                                  src="{{url_for('static',filename='uploads/'+i.movie.logo)}}"
-                                 alt="环太平洋">
+                                 alt="{{i.title}}">
                         </a>
                     </div>
                     <div class="media-body">

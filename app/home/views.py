@@ -84,11 +84,15 @@ def index(page=1):
 def play(id=None):
     if id is not None:
         play_movie = Movie.query.filter_by(id=int(id)).first()
+        if play_movie is None:
+            return redirect(url_for('home.index', page=1))
         # 播放数量加一
         play_movie.playnum += 1
         db.session.add(play_movie)
         db.session.commit()
-    return render_template("home/play.html", play_movie=play_movie)
+        # 获取当前电影的评论-==
+        commit = Comment.query.filter_by(movie_id=id)
+    return render_template("home/play.html", play_movie=play_movie, commit=commit)
 
 
 # 电影搜索
