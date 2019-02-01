@@ -84,9 +84,18 @@ def play():
     return render_template("home/play.html")
 
 
-@home.route("/search/")
-def search():
-    return render_template("home/search.html")
+# 电影搜索
+@home.route("/search/<int:page>", methods=["GET"])
+def search(page=1):
+    key = request.args.get("key", None)
+    if key is None:
+        key = session.get('key')
+    else:
+        session['key'] = key
+    page_data = Movie.query.filter(Movie.title.ilike("%" + key + "%")).order_by(Movie.addtime.desc())
+    page_data = page_data.paginate(page=page, per_page=10)
+    search_num = len(page_data.items)
+    return render_template("home/search.html", page_data=page_data, key=key, search_num=search_num)
 
 
 # 登陆
