@@ -79,9 +79,16 @@ def index(page=1):
     return render_template("home/index.html", tages=tages, p=p, page_data=page_data)
 
 
-@home.route("/play/")
-def play():
-    return render_template("home/play.html")
+# 电影播放
+@home.route("/play/<int:id>", methods=["GET", ])
+def play(id=None):
+    if id is not None:
+        play_movie = Movie.query.filter_by(id=int(id)).first()
+        # 播放数量加一
+        play_movie.playnum += 1
+        db.session.add(play_movie)
+        db.session.commit()
+    return render_template("home/play.html", play_movie=play_movie)
 
 
 # 电影搜索

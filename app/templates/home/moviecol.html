@@ -29,13 +29,14 @@
                 {% for i in data_page.items %}
                 <div class="media">
                     <div class="media-left">
-                        <a href="{{ url_for('home.play') }}">
-                            <img class="media-object" width="90px" height="90px" src="{{url_for('static',filename='uploads/'+i.movie.logo)}}"
+                        <a href="{{ url_for('home.play', id=i.id) }}">
+                            <img class="media-object" width="90px" height="90px"
+                                 src="{{url_for('static',filename='uploads/'+i.movie.logo)}}"
                                  alt="环太平洋">
                         </a>
                     </div>
                     <div class="media-body">
-                        <h4 class="media-heading">{{i.movie.title}}<a href="{{ url_for('home.play') }}"
+                        <h4 class="media-heading">{{i.movie.title}}<a href="{{ url_for('home.play', id=i.id) }}"
                                                                       class="label label-primary pull-right"><span
                                 class="glyphicon glyphicon-play"></span>播放影片</a></h4>
                         {{i.movie.info}}
