@@ -22,66 +22,54 @@
                     <tr>
                         <td style="width:10%;">电影标签</td>
                         <td style="width:90%;">
-                            <a class="label label-info"><span class="glyphicon glyphicon-tag"></span>&nbsp;标签一</a>
-                            &nbsp;
-                            <a class="label label-info"><span class="glyphicon glyphicon-tag"></span>&nbsp;标签一</a>
-                            &nbsp;
-                            <a class="label label-info"><span class="glyphicon glyphicon-tag"></span>&nbsp;标签一</a>
-                            &nbsp;
-                            <a class="label label-info"><span class="glyphicon glyphicon-tag"></span>&nbsp;标签一</a>
-                            &nbsp;
-                            <a class="label label-info"><span class="glyphicon glyphicon-tag"></span>&nbsp;标签一</a>
+                            {% for v in tages %}
+                            <a class="label label-info"
+                               href="{{url_for('home.index')}}?tid={{v.id}}&star={{p['star']}}&time={{p['time']}}&pm={{p['pm']}}&cm={{p['cm']}}"><span
+                                    class="glyphicon glyphicon-tag"></span>&nbsp{{v.name}}</a>
+                            {% endfor %}
                     </tr>
                     <tr>
                         <td>电影星级</td>
                         <td>
-                            <a class="label label-warning"><span class="glyphicon glyphicon-star"></span>&nbsp;一星</a>
-                            &nbsp;
-                            <a class="label label-warning"><span class="glyphicon glyphicon-star"></span>&nbsp;二星</a>
-                            &nbsp;
-                            <a class="label label-warning"><span class="glyphicon glyphicon-star"></span>&nbsp;三星</a>
-                            &nbsp;
-                            <a class="label label-warning"><span class="glyphicon glyphicon-star"></span>&nbsp;四星</a>
-                            &nbsp;
-                            <a class="label label-warning"><span class="glyphicon glyphicon-star"></span>&nbsp;五星</a>
+                            {% for v in range(1, 5) %}
+                            <a class="label label-warning"
+                               href="{{url_for('home.index')}}?tid={{p['tid']}}&star={{v}}&time={{p['time']}}&pm={{p['pm']}}&cm={{p['cm']}}"><span
+                                    class="glyphicon glyphicon-star"></span>&nbsp;{{v}}星</a>
+                            {% endfor %}
                         </td>
                     </tr>
                     <tr>
                         <td>上映时间</td>
                         <td>
-                            <a class="label label-default"><span class="glyphicon glyphicon-time"></span>&nbsp;最近</span>
+                            <a href="{{url_for('home.index')}}?tid={{p['tid']}}&star={{p['star']}}&time=1&pm={{p['pm']}}&cm={{p['cm']}}"
+                               class="label label-default"><span class="glyphicon glyphicon-time">最近</span>
                             </a>
-                            &nbsp;
-                            <a class="label label-default"><span
-                                    class="glyphicon glyphicon-time"></span>&nbsp;2017</span></a>
-                            &nbsp;
-                            <a class="label label-default"><span
-                                    class="glyphicon glyphicon-time"></span>&nbsp;2016</span></a>
-                            &nbsp;
-                            <a class="label label-default"><span
-                                    class="glyphicon glyphicon-time"></span>&nbsp;2015</span></a>
-                            &nbsp;
-                            <a class="label label-default"><span class="glyphicon glyphicon-time"></span>&nbsp;更早</span>
+                            <a href="{{url_for('home.index')}}?tid={{p['tid']}}&star={{p['star']}}&time=2&pm={{p['pm']}}&cm={{p['cm']}}"
+                               class="label label-default"><span class="glyphicon glyphicon-time">更早</span>
                             </a>
                         </td>
                     </tr>
                     <tr>
                         <td>播放数量</td>
                         <td>
-                            <a class="label label-success"><span class="glyphicon glyphicon-arrow-down"></span>&nbsp;从高到底</span>
+                            <a href="{{url_for('home.index')}}?tid={{p['tid']}}&star={{p['star']}}&time={{p['time']}}&pm=1&cm={{p['cm']}}"
+                               class="label label-success"><span class="glyphicon glyphicon-arrow-down"></span>&nbsp;从高到底</span>
                             </a>
                             &nbsp;
-                            <a class="label label-danger"><span
+                            <a href="{{url_for('home.index')}}?tid={{p['tid']}}&star={{p['star']}}&time={{p['time']}}&pm=2&cm={{p['cm']}}"
+                               class="label label-danger"><span
                                     class="glyphicon glyphicon-arrow-up"></span>&nbsp;从低到高</span></a>
                         </td>
                     </tr>
                     <tr>
                         <td>评论数量</td>
                         <td>
-                            <a class="label label-success"><span class="glyphicon glyphicon-arrow-down"></span>&nbsp;从高到底</span>
+                            <a href="{{url_for('home.index')}}?tid={{p['tid']}}&star={{p['star']}}&time={{p['time']}}&pm={{p['pm']}}&cm=1"
+                               class="label label-success"><span class="glyphicon glyphicon-arrow-down"></span>&nbsp;从高到底</span>
                             </a>
                             &nbsp;
-                            <a class="label label-danger"><span
+                            <a href="{{url_for('home.index')}}?tid={{p['tid']}}&star={{p['star']}}&time={{p['time']}}&pm={{p['pm']}}&cm=2"
+                               class="label label-danger"><span
                                     class="glyphicon glyphicon-arrow-up"></span>&nbsp;从低到高</span></a>
                         </td>
                     </tr>

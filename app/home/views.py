@@ -19,7 +19,9 @@ from flask import url_for  # url生成器
 import os
 from app import db
 from app import app
+from app.models import Tag
 from app.models import User
+from app.models import Movie
 from app.models import UserLog
 from app.models import Comment
 from app.models import MovieCol
@@ -35,9 +37,24 @@ from app.home.decorator import user_login_req  # 登陆验证装饰器
 from app.admin.updata import change_filename  # 导入修改上传头像的名称
 
 
-@home.route("/")
+@home.route("/", methods=["GET"])
 def index():
-    return render_template("home/index.html")
+    tid = request.args.get("tid", 0)  # 标签
+    star = request.args.get("star", 0)  # 星级
+    time = request.args.get("time", 0)  # 上映时间
+    pm = request.args.get("pm", 0)  # 播放数量
+    cm = request.args.get("cm", 0)  # 评论数量
+    tages = Tag.query.all()  # 获取所有的标签
+    p = dict(
+        tid=tid,
+        star=star,
+        time=time,
+        pm=pm,
+        cm=cm
+    )
+    # movie = Movie.query.filter_by(user_id=session.get('user_id')).order_by(Comment.addtime.desc()).paginate(
+    #     page=page, per_page=10)
+    return render_template("home/index.html", tages=tages, p=p)
 
 
 @home.route("/play/")
